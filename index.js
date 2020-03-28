@@ -135,6 +135,8 @@ const transitionRateForZoneLengthChange = (srcZoneLength, destZoneLength, params
 }
 
 const indelTrajectoryDegeneracy = (zoneLengths) => {
+  if (zoneLengths.length == 1)  // catch the special case where there is no machine to create
+    return 1
   let machines = []
   for (let n = 0; n < zoneLengths.length - 1; ++n) {
     const deltaLength = zoneLengths[n+1] - zoneLengths[n]
