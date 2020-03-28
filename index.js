@@ -160,7 +160,7 @@ const indelTrajectoryDegeneracy = (zoneLengths) => {
         .concat (["--input-chars", inputSeq,
                   "--output-chars", outputSeq,
                   "--loglike"])
-  console.warn("boss "+args.join(" "))
+//  console.warn("boss "+args.join(" "))
   const mbResult = runWithFilesSync (args)
   const mbJson = JSON.parse (mbResult.stdout),
         logForwardProb = mbJson[0][2]
@@ -200,8 +200,10 @@ const chopZoneLikelihood = (nDeleted, nInserted, params, time, config) => {
       zoneLengths[events] = nInserted + 1
       let finished = false
       while (!finished) {
-        console.warn(zoneLengths)
-        if (!countIdenticalNeighbors (zoneLengths))
+        const trajectoryInsertions = countTotalInsertions (zoneLengths)
+        const trajectoryDeletions = countTotalDeletions (zoneLengths)
+        console.warn({zoneLengths})
+        if (!countIdenticalNeighbors (zoneLengths) && trajectoryInsertions >= nInserted && trajectoryDeletions >= nDeleted)
           prob += indelTrajectoryLikelihood (zoneLengths, params, time)
         if (events == 1)
           finished = true
@@ -219,6 +221,20 @@ const chopZoneLikelihood = (nDeleted, nInserted, params, time, config) => {
     }
   }
   return prob
+}
+
+const countTotalInsertions = (zoneLengths) => {
+  let count = 0
+  for (let i = 1; i < zoneLengths.length; ++i)
+    count += Math.max (zoneLengths[i] - zoneLengths[i-1], 0)
+  return count
+}
+
+const countTotalDeletions = (zoneLengths) => {
+  let count = 0
+  for (let i = 1; i < zoneLengths.length; ++i)
+    count -= Math.min (zoneLengths[i] - zoneLengths[i-1], 0)
+  return count
 }
 
 const chopZoneLikelihoods = (params, time, config) => {
