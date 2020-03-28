@@ -193,7 +193,7 @@ const chopZoneLikelihood = (nDeleted, nInserted, params, time, config) => {
     ++minEvents
   for (let events = minEvents; events <= maxEvents; ++events) {
     if (events == 0)  // only true if nDeleted == nInserted == 0
-      prob += indelTrajectoryLikelihood ([0], params, time)
+      prob += indelTrajectoryLikelihood ([1], params, time)
     else {  // events > 0
       let zoneLengths = new Array (events + 1).fill (1)
       zoneLengths[0] = nDeleted + 1

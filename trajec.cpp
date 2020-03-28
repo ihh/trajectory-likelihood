@@ -214,9 +214,12 @@ double chopZoneLikelihood (int nDeleted, int nInserted, const IndelParams& param
   if (nInserted)
     ++minEvents;
   for (int events = minEvents; events <= config.maxEvents; ++events) {
-    if (events == 0)  // only true if nDeleted == nInserted == 0
-      prob += indelTrajectoryLikelihood (vector<int> (1, 0), params, time);
-    else {  // events > 0
+    if (events == 0) {  // only true if nDeleted == nInserted == 0
+      const double pTraj = indelTrajectoryLikelihood (vector<int> (1, 1), params, time);
+      prob += pTraj;
+      if (config.verbose)
+	cerr << "Zone lengths: [ 1 ]  Probability: " << pTraj << endl;
+    } else {  // events > 0
       vector<int> zoneLengths (events + 1, 1);
       zoneLengths[0] = nDeleted + 1;
       zoneLengths[events] = nInserted + 1;
