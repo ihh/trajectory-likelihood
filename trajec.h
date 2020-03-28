@@ -23,9 +23,9 @@ struct IndelParams {
 struct ChopZoneConfig {
   int maxEvents;
   int maxLen;
-  bool verbose;
-  ChopZoneConfig() : maxEvents(3), maxLen(100), verbose(false) { }
-  ChopZoneConfig (int e, int l, bool v) : maxEvents(e), maxLen(l), verbose(v) { }
+  int verbose;
+  ChopZoneConfig() : maxEvents(3), maxLen(100), verbose(0) { }
+  ChopZoneConfig (int e, int l, int v) : maxEvents(e), maxLen(l), verbose(v) { }
 };
 
 // Calculate chop zone probabilities (internal zones i.e. not at the ends of the sequence)

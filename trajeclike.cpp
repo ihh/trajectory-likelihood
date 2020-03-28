@@ -7,7 +7,7 @@ int main (int argc, char** argv) {
   po::options_description opts ("Options");
   opts.add_options()
     ("help,h", "display this help message")
-    ("verbose,v", "verbose logging")
+    ("verbose,v", po::value<int>()->default_value(0), "logging verbosity")
     ("gamma", po::value<double>()->default_value(.99), "gamma parameter from MLH 2004 (parameter of equilibrium geometric distribution over sequence lengths)")
     ("mu", po::value<double>()->default_value(.05), "mu parameter from MLH 2004 (rightward deletion rate)")
     ("r,r", po::value<double>()->default_value(.01), "r parameter from MLH 2004 (parameter of geometric distribution over deletion lengths")
@@ -26,7 +26,7 @@ int main (int argc, char** argv) {
     }
 
     const IndelParams params (vm.at("gamma").as<double>(), vm.at("mu").as<double>(), vm.at("r").as<double>());
-    const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), vm.count("verbose"));
+    const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), vm.at("verbose").as<int>());
     const double time = vm.at("time").as<double>();
     
     auto probs = chopZoneLikelihoods (params, time, config);

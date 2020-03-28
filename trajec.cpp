@@ -6,15 +6,21 @@ bool doublesEqual (double a, double b);
 double indelTrajectoryLikelihood (const vector<int>& zoneLengths, const IndelParams& params, double time);
 bool anyIdenticalNeighbors (const vector<int>& list);
 double exitRateForZoneLength (int zoneLength, const IndelParams& params);
+vector<double> exitRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params);
 double insertionRate (int k, const IndelParams& params);
 double deletionRate (int k, const IndelParams& params);
 double transitionRateForZoneLengthChange (int srcZoneLength, int destZoneLength, const IndelParams& params);
+vector<double> transitionRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params);
+bool trajectoryIsValid (const vector<int>& zoneLengths, int nInserted, int nDeleted);
 int indelTrajectoryDegeneracy (const vector<int>& zoneLengths);
+vector<Machine> makeEventMachines (const vector<int>& zoneLengths);
+Machine makeTrajectoryMachine (const vector<int>& zoneLengths);
 Machine makeInsertionMachine (int k);
 Machine makeDeletionMachine (int k);
 int countTotalInsertions (const vector<int>& zoneLengths);
 int countTotalDeletions (const vector<int>& zoneLengths);
-
+void logTrajectoryLikelihood (const vector<int>& zoneLengths, double pTraj, const IndelParams& params, double time, const ChopZoneConfig& config, bool isValid);
+  
 // function definitions
 bool doublesEqual (double a, double b) {
   const double diff = abs (a - b);
@@ -119,20 +125,28 @@ double indelTrajectoryLikelihood (const vector<int>& zoneLengths, const IndelPar
   if (N == 0)
     throw std::runtime_error ("There must be at least one state in the trajectory");
   for (int n = 0; n < zoneLengths.size(); ++n) {
-    if (zoneLengths[n] < 0)
-      throw std::runtime_error ("All zone lengths must be nonnegative integers");
-    if (n < zoneLengths.size() - 1 && zoneLengths[n] == 0)
-      throw std::runtime_error ("Only the final zone length in the trajectory can be zero");
+    if (zoneLengths[n] < 1)
+      throw std::runtime_error ("All zone lengths must be positive integers");
   }
   if (anyIdenticalNeighbors (zoneLengths))
     throw std::runtime_error ("No two adjacent states in the trajectory can be identical");
-  vector<double> exitRates, transitionRates;
-  for (int n = 0; n < zoneLengths.size(); ++n) {
-    exitRates.push_back (exitRateForZoneLength (zoneLengths[n], params));
-    if (n > 0)
-      transitionRates.push_back (transitionRateForZoneLengthChange (zoneLengths[n-1], zoneLengths[n], params));
-  }
+  const vector<double> exitRates = exitRatesForZoneLengths (zoneLengths, params);
+  const vector<double> transitionRates = transitionRatesForZoneLengths (zoneLengths, params);
   return trajectoryLikelihood (exitRates, transitionRates, time) * indelTrajectoryDegeneracy (zoneLengths);
+}
+
+vector<double> exitRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params) {
+  vector<double> exitRates;
+  for (int n = 0; n < zoneLengths.size(); ++n)
+    exitRates.push_back (exitRateForZoneLength (zoneLengths[n], params));
+  return exitRates;
+}
+
+vector<double> transitionRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params) {
+  vector<double> transitionRates;
+  for (int n = 1; n < zoneLengths.size(); ++n)
+    transitionRates.push_back (transitionRateForZoneLengthChange (zoneLengths[n-1], zoneLengths[n], params));
+  return transitionRates;
 }
 
 bool anyIdenticalNeighbors (const vector<int>& list) {
@@ -145,7 +159,7 @@ bool anyIdenticalNeighbors (const vector<int>& list) {
 double exitRateForZoneLength (int zoneLength, const IndelParams& params) {
   const double lambdaSum = params.gamma * params.mu * (1-params.r) * (1-params.r) / (1 - params.gamma * params.r);
   const double muSum = params.mu * (1 - params.r);
-  return (zoneLength + 1) * (lambdaSum + muSum);
+  return zoneLength * (lambdaSum + muSum);
 }
 
 double insertionRate (int k, const IndelParams& params) {
@@ -167,20 +181,33 @@ const Machine wildEcho = Machine::wildEcho (wildChars);
 int indelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
   if (zoneLengths.size() == 1)  // catch the special case where there is no machine to create
     return 1;
+  const Machine machine = makeTrajectoryMachine (zoneLengths);
+  const EvaluatedMachine eval (machine);
+  SeqPair seqPair;
+  seqPair.input.seq = vector<string> (zoneLengths[0] - 1, string("A"));
+  seqPair.output.seq = vector<string> (zoneLengths[zoneLengths.size() - 1] - 1, string("B"));
+  const RollingOutputForwardMatrix fwd (eval, seqPair);
+  return (int) (.5 + exp (fwd.logLike()));
+}
+
+Machine makeTrajectoryMachine (const vector<int>& zoneLengths) {
   Machine machine = wildEcho;
+  const vector<Machine> eventMachines = makeEventMachines (zoneLengths);
+  for (const auto& eventMachine: eventMachines)
+    machine = Machine::compose (machine, eventMachine);
+  return machine;
+}
+
+vector<Machine> makeEventMachines (const vector<int>& zoneLengths) {
+  vector<Machine> machines;
   for (int n = 0; n + 1 < zoneLengths.size(); ++n) {
     const int deltaLength = zoneLengths[n+1] - zoneLengths[n];
     const Machine deltaMachine = (deltaLength > 0
 				  ? makeInsertionMachine (deltaLength)
 				  : makeDeletionMachine (-deltaLength));
-    machine = Machine::compose (machine, deltaMachine);
+    machines.push_back (deltaMachine);
   }
-  const EvaluatedMachine eval (machine);
-  SeqPair seqPair;
-  seqPair.input.seq = vector<string> (zoneLengths[0], string("A"));
-  seqPair.output.seq = vector<string> (zoneLengths[zoneLengths.size() - 1], string("B"));
-  const RollingOutputForwardMatrix fwd (eval, seqPair);
-  return (int) (.5 + exp (fwd.logLike()));
+  return machines;
 }
 
 vector<Machine> insertionMachine (1, Machine::null());
@@ -188,8 +215,8 @@ Machine makeInsertionMachine (int k) {
   while (insertionMachine.size() <= k)
     insertionMachine.push_back (Machine::concatenate
 				(Machine::concatenate (wildEcho,
-						       Machine::wildGenerator (vector<string> (insertionMachine.size(),
-											       string("B")))),
+						       Machine::generator (vector<string> (insertionMachine.size(),
+											   string("B")))),
 				 wildEcho));
   return insertionMachine[k];
 }
@@ -215,24 +242,22 @@ double chopZoneLikelihood (int nDeleted, int nInserted, const IndelParams& param
     ++minEvents;
   for (int events = minEvents; events <= config.maxEvents; ++events) {
     if (events == 0) {  // only true if nDeleted == nInserted == 0
-      const double pTraj = indelTrajectoryLikelihood (vector<int> (1, 1), params, time);
+      const vector<int> zoneLengths (1, 1);
+      const double pTraj = indelTrajectoryLikelihood (zoneLengths, params, time);
       prob += pTraj;
-      if (config.verbose)
-	cerr << "Zone lengths: [ 1 ]  Probability: " << pTraj << endl;
+      logTrajectoryLikelihood (zoneLengths, pTraj, params, time, config, true);
     } else {  // events > 0
       vector<int> zoneLengths (events + 1, 1);
       zoneLengths[0] = nDeleted + 1;
       zoneLengths[events] = nInserted + 1;
       bool finished = false;
       while (!finished) {
-        const int trajectoryInsertions = countTotalInsertions (zoneLengths);
-        const int trajectoryDeletions = countTotalDeletions (zoneLengths);
-        const double pTraj = (!anyIdenticalNeighbors (zoneLengths) && trajectoryInsertions >= nInserted && trajectoryDeletions >= nDeleted
+	const bool isValid = trajectoryIsValid (zoneLengths, nInserted, nDeleted);
+        const double pTraj = (isValid
 			      ? indelTrajectoryLikelihood (zoneLengths, params, time)
 			      : 0);
 	prob += pTraj;
-	if (config.verbose)
-	  cerr << "Zone lengths: [ " << to_string_join (zoneLengths, ", ") << " ]  Probability: " << pTraj << endl;
+	logTrajectoryLikelihood (zoneLengths, pTraj, params, time, config, isValid);
         if (events == 1)
           finished = true;
         else
@@ -249,6 +274,41 @@ double chopZoneLikelihood (int nDeleted, int nInserted, const IndelParams& param
     }
   }
   return prob;
+}
+
+void logTrajectoryLikelihood (const vector<int>& zoneLengths, double pTraj, const IndelParams& params, double time, const ChopZoneConfig& config, bool isValid) {
+  if (config.verbose && ((isValid && pTraj > 0) || config.verbose > 1)) {
+    cerr << "Zone lengths: [" << to_string_join(zoneLengths) << "]  ";
+    if (isValid) {
+      if (config.verbose > 2) {
+	const auto exitRates = exitRatesForZoneLengths (zoneLengths, params);
+	cerr << "Exit rates: [" << to_string_join(exitRates) << "]  ";
+	if (config.verbose > 3) {
+	  const auto transitionRates = transitionRatesForZoneLengths (zoneLengths, params);
+	  cerr << "Transition rates: [" << to_string_join(transitionRates) << "]  ";
+	  if (config.verbose > 4) {
+	    const auto trajLike = trajectoryLikelihood (exitRates, transitionRates, time);
+	    const auto degen = indelTrajectoryDegeneracy (zoneLengths);
+	    cerr << "P(traj) " << trajLike << " #traj=" << degen << "  ";
+	  }
+	}
+      }
+      cerr << "Probability: " << pTraj << endl;
+      if (isValid && pTraj > 0 && config.verbose > 5) {
+	if (config.verbose > 6)
+	  for (const auto& e: makeEventMachines (zoneLengths))
+	    e.writeJson (cerr);
+	makeTrajectoryMachine (zoneLengths).writeJson (cerr);
+      }
+    } else
+      cerr << "Invalid" << endl;
+  }
+}
+
+bool trajectoryIsValid (const vector<int>& zoneLengths, int nInserted, int nDeleted) {
+  const int trajectoryInsertions = countTotalInsertions (zoneLengths);
+  const int trajectoryDeletions = countTotalDeletions (zoneLengths);
+  return !anyIdenticalNeighbors (zoneLengths) && trajectoryInsertions >= nInserted && trajectoryDeletions >= nDeleted;
 }
 
 int countTotalInsertions (const vector<int>& zoneLengths) {

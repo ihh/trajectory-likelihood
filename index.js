@@ -49,7 +49,7 @@ const trajectoryLikelihood = (exitRates, transitionRates, time) => {
         let u_nk = 0
         if (chi_n != zeta_i)
           for (let j = k; j <= d[n]; ++j)
-            u_nk -= c[n][j] * factorial(j) / (factorial(k) * Math.pow (chi[n] - zeta_i, j - k + 1))
+            u_nk -= c[n][j] * factorial(j) / (factorial(k) * Math.pow (chi_n - zeta_i, j - k + 1))
         else if (k == 0) {
           for (let m = 0; m <= M; ++m)
             if (m != n)
@@ -105,10 +105,8 @@ const indelTrajectoryLikelihood = (zoneLengths, params, time) => {
     throw new Error ("There must be at least one state in the trajectory")
   if (zoneLengths.filter ((l) => typeof(l) !== 'number').length)
     throw new Error ("Zone lengths must be numeric")
-  if (zoneLengths.filter ((l) => l < 0 || Math.round(l) != l).length)
-    throw new Error ("All zone lengths must be nonnegative integers")
-  if (zoneLengths.filter ((l, n) => l == 0 && n < N-1).length)
-    throw new Error ("Only the final zone length in the trajectory can be zero")
+  if (zoneLengths.filter ((l) => l < 1 || Math.round(l) != l).length)
+    throw new Error ("All zone lengths must be positive integers")
   if (countIdenticalNeighbors (zoneLengths))
     throw new Error ("No two adjacent states in the trajectory can be identical")
   const exitRates = zoneLengths.map ((l) => exitRateForZoneLength (l, params))
@@ -124,7 +122,7 @@ const exitRateForZoneLength = (zoneLength, params) => {
   const { gamma, mu, r } = params
   const lambdaSum = gamma * mu * (1-r) * (1-r) / (1 - gamma*r)
   const muSum = mu * (1-r)
-  return (zoneLength + 1) * (lambdaSum + muSum)
+  return zoneLength * (lambdaSum + muSum)
 }
 
 const insertionRate = (k, params) => {
@@ -154,8 +152,8 @@ const indelTrajectoryDegeneracy = (zoneLengths) => {
                    ? makeInsertionMachine (deltaLength)
                    : makeDeletionMachine (-deltaLength))
   }
-  const inputSeq = "A".repeat (zoneLengths[0])
-  const outputSeq = "B".repeat (zoneLengths[zoneLengths.length - 1])
+  const inputSeq = "A".repeat (zoneLengths[0] - 1)
+  const outputSeq = "B".repeat (zoneLengths[zoneLengths.length - 1] - 1)
   const args = machines.join(" --compose ").split(" ")
         .concat (["--input-chars", inputSeq,
                   "--output-chars", outputSeq,
