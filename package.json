@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/ihh/trajectory-likelihood#readme",
   "dependencies": {
-    "machineboss": "^1.0.1"
+    "machineboss": "^1.0.3"
   }
 }
