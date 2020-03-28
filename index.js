@@ -1,6 +1,12 @@
 const machineboss = require ('machineboss'),
       { initPromise, runWithFilesSync } = machineboss
 
+const extend = function() {
+  let a = arguments[0]
+  Array.from(arguments).slice(1).forEach ((b) => Object.keys(b).forEach ((k) => a[k] = b[k]))
+  return a
+}
+
 // Algorithm 1 of (Miklos, Lunter & Holmes, 2004)
 // exitRates = chi
 // transitionRates = r
@@ -103,11 +109,15 @@ const indelTrajectoryLikelihood = (zoneLengths, params, time) => {
     throw new Error ("All zone lengths must be nonnegative integers")
   if (zoneLengths.filter ((l, n) => l == 0 && n < N-1).length)
     throw new Error ("Only the final zone length in the trajectory can be zero")
-  if (zoneLengths.filter ((l, n) => n < N-1 && l == zoneLengths[n+1]).length)
+  if (countIdenticalNeighbors (zoneLengths))
     throw new Error ("No two adjacent states in the trajectory can be identical")
   const exitRates = zoneLengths.map ((l) => exitRateForZoneLength (l, params))
   const transitionRates = zoneLengths.slice(1).map ((l, n) => transitionRateForZoneLengthChange (zoneLengths[n], l, params))
   return trajectoryLikelihood (exitRates, transitionRates, time) * indelTrajectoryDegeneracy (zoneLengths)
+}
+
+const countIdenticalNeighbors = (list) => {
+  return list.filter ((l, n) => n < list.length - 1 && l == list[n+1]).length
 }
 
 const exitRateForZoneLength = (zoneLength, params) => {
@@ -150,6 +160,7 @@ const indelTrajectoryDegeneracy = (zoneLengths) => {
         .concat (["--input-chars", inputSeq,
                   "--output-chars", outputSeq,
                   "--loglike"])
+  console.warn("boss "+args.join(" "))
   const mbResult = runWithFilesSync (args)
   const mbJson = JSON.parse (mbResult.stdout),
         logForwardProb = mbJson[0][2]
@@ -164,8 +175,80 @@ const makeDeletionMachine = (k) => {
   return "--begin --echo-wild AB --concat --begin --recognize-one AB --repeat " + k + " --end --concat --echo-wild AB --end"
 }
 
+// Config for chop zone probability calculations
+const defaultChopZoneLikelihoodConfig = { maxEvents: 3,
+                                          maxLen: 100 }
+const getConfig = (config) => extend ({},
+                                      defaultChopZoneLikelihoodConfig,
+                                      config || {})
+
+// Calculate chop zone probabilities (internal zones i.e. not at the ends of the sequence)
+const chopZoneLikelihood = (nDeleted, nInserted, params, time, config) => {
+  const { maxEvents, maxLen } = getConfig (config)
+  let prob = 0
+  let minEvents = 0
+  if (nDeleted)
+    ++minEvents
+  if (nInserted)
+    ++minEvents
+  for (let events = minEvents; events <= maxEvents; ++events) {
+    if (events == 0)  // only true if nDeleted == nInserted == 0
+      prob += indelTrajectoryLikelihood ([0], params, time)
+    else {  // events > 0
+      let zoneLengths = new Array (events + 1).fill (1)
+      zoneLengths[0] = nDeleted + 1
+      zoneLengths[events] = nInserted + 1
+      let finished = false
+      while (!finished) {
+        console.warn(zoneLengths)
+        if (!countIdenticalNeighbors (zoneLengths))
+          prob += indelTrajectoryLikelihood (zoneLengths, params, time)
+        if (events == 1)
+          finished = true
+        else
+          for (let i = 1; true; ++i)
+            if (++zoneLengths[i] > maxLen) {
+              if (i == events - 1) {
+                finished = true
+                break
+              } else
+                zoneLengths[i] = 1
+            } else
+              break
+      }
+    }
+  }
+  return prob
+}
+
+const chopZoneLikelihoods = (params, time, config) => {
+  const { maxEvents, maxLen } = getConfig (config)
+  let probs = []
+  for (let nDeleted = 0; nDeleted <= maxLen; ++nDeleted) {
+    let pd = []
+    for (let nInserted = 0; nInserted <= maxLen; ++nInserted)
+      pd.push (chopZoneLikelihood (nDeleted, nInserted, params, time, config))
+    probs.push (pd)
+  }
+  return probs
+}
+
+const testCZL = (params, time, config) => {
+  const probs = chopZoneLikelihoods (params, time, config)
+  let total = 0
+  probs.forEach ((pd) => {
+    pd.forEach ((p) => total += p)
+    console.log (JSON.stringify (pd))
+  })
+  console.log ("Total: " + total)
+}
+
 module.exports = { trajectoryLikelihood,
                    factorial,
                    initPromise,
                    indelTrajectoryDegeneracy,
-                   indelTrajectoryLikelihood }
+                   indelTrajectoryLikelihood,
+                   testCZL,
+                   defaultChopZoneLikelihoodConfig,
+                   chopZoneLikelihood,
+                   chopZoneLikelihoods }
