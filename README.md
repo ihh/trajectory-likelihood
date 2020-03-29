@@ -7,7 +7,7 @@ The code includes an implementation of Algorithm 1 from the MLH 2004 paper, whic
 with event times integrated out.
 
 For clarity, this code currently makes the following simplifications relative to the full "Long Indel" model described in the paper:
-- Currently it only calculates the gap likelihoods for internal chop zones (i.e. not the regions at the ends of the sequence, nor the probability of deleting/inserting the whole entire sequence). This is equivalent to considering only infinitely long sequences.
+- Currently it only calculates the gap likelihoods for internal chop zones (i.e. not the regions at the ends of the sequence, nor the probability of deleting/inserting the entire sequence). This is equivalent to considering only infinitely long sequences.
 - Currently it does not use a mixture of geometric distributions for the indel lengths, just a single geometric distribution.
 
 Both these modifications are relatively straightforward to implement, as they only involve changing the calculation of zone exit probabilities and transition rates.
