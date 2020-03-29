@@ -13,7 +13,6 @@ double transitionRateForZoneLengthChange (int srcZoneLength, int destZoneLength,
 vector<double> transitionRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params);
 bool trajectoryIsValid (const vector<int>& zoneLengths, int nInserted, int nDeleted);
 int indelTrajectoryDegeneracy (const vector<int>& zoneLengths);
-int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths);
 vector<Machine> makeEventMachines (const vector<int>& zoneLengths);
 Machine makeTrajectoryMachine (const vector<int>& zoneLengths);
 Machine makeInsertionMachine (int k);
@@ -133,7 +132,7 @@ double indelTrajectoryLikelihood (const vector<int>& zoneLengths, const IndelPar
     throw std::runtime_error ("No two adjacent states in the trajectory can be identical");
   const vector<double> exitRates = exitRatesForZoneLengths (zoneLengths, params);
   const vector<double> transitionRates = transitionRatesForZoneLengths (zoneLengths, params);
-  return trajectoryLikelihood (exitRates, transitionRates, time) * fastIndelTrajectoryDegeneracy (zoneLengths);
+  return trajectoryLikelihood (exitRates, transitionRates, time) * indelTrajectoryDegeneracy (zoneLengths);
 }
 
 vector<double> exitRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params) {
@@ -335,98 +334,4 @@ vector<vector<double> > chopZoneLikelihoods (const IndelParams& params, double t
     probs.push_back (pd);
   }
   return probs;
-}
-
-int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
-  int result = 0;
-  bool verified = false;
-  switch (zoneLengths.size()) {
-  case 1:
-  case 2:
-    result = 1;
-    break;
-  case 3:
-    {
-      const int z0 = zoneLengths[0],
-	z1 = zoneLengths[1],
-	z2 = zoneLengths[2];
-      const bool ins1 = z1 > z0, ins2 = z2 > z1;
-      const int e1 = abs(z1 - z0), e2 = abs(z2 - z1);
-      if (ins1 && ins2)  // ins,ins
-	result = z0 * z1;
-      else if (ins1 && !ins2)  // ins,del
-	result = z2 > 1 ? (z0 > 1 ? 2 : (z1 - e2)) : z0;
-      else if (!ins1 && ins2)  // del,ins
-	result = 1;
-      else  // del,del
-	result = z0 - e1;
-    }
-    break;
-  case 4:
-    {
-      const int z0 = zoneLengths[0],
-	z1 = zoneLengths[1],
-	z2 = zoneLengths[2],
-	z3 = zoneLengths[3];
-      const bool ins1 = z1 > z0, ins2 = z2 > z1, ins3 = z3 > z2;
-      const int e1 = abs(z1 - z0), e2 = abs(z2 - z1), e3 = abs(z3 - z2);
-      if (ins1 && ins2 && ins3) {  // ins,ins,ins
-	result = z0 * z1 * z2;
-      } else if (ins1 && ins2 && !ins3) {  // ins,ins,del
-	if (z3 > 1) {
-	  if (z0 > 1) {
-	    result = 2 * ((e1 + 1) + min (min (e1 + 1, e2 + 1), min (e3 + 2 - z0, z2 - e3)));
-	  } else
-	    result = z1 * (z2 - e3);
-	} else
-	  result = (z0 * z1) * (z2 - e3);
-      } else if (ins1 && !ins2 && ins3) {  // ins,del,ins
-	result = (z2 > 1 ? (z0 > 1 ? 2 : (z1 - e2)) : z0) * z2;
-      } else if (ins1 && !ins2 && !ins3) {  // ins,del,del
-	if (z3 > 1) {
-	  if (z0 > 1) {
-	    const int aInit = z0 - 1;  // number of A's that must be deleted
-	    const int bFinal = z3 - 1;
-	    if (e2 + bFinal <= e1 && e3 >= aInit)  // first deletion doesn't remove any A's
-	      result += 2 * (e1 + 1 - e2);
-	    const int a2min = max (1, aInit - e3), a2max = min (aInit - 1, e2);  // a2 = # of A's removed by first deletion
-	    for (int a2 = a2min; a2 <= a2max; ++a2)
-	      result += 2 * (e2 > a2 ? 1 : (aInit + 1 - a2));
-	    if (e2 >= aInit)
-	      result += 2 * (z2 - e3);  // first deletion removes all the A's
-	    const int dmin = min (e2, e3);
-	    if (dmin >= aInit / 2)
-	      result += 2 * (aInit - 1);
-	    else
-	      result += 2 * dmin;
-	  } else
-	    result = (z1 - e2) * (z2 - e3);
-	} else
-	  result = z0 * (z1 - e2) * (z2 - e3);
-      } else if (!ins1 && ins2 && ins3) {  // del,ins,ins
-	result = z1 * z2;
-      } else if (!ins1 && ins2 && !ins3) {  // del,ins,del
-	result = (z0 - e1) * (z3 > 1 ? (z1 > 1 ? 2 : (z2 - e3)) : z1);
-      } else if (!ins1 && !ins2 && ins3) {  // del,del,ins
-	result = z0 - e1;
-      } else {  // del,del,del
-	result = (z0 - e1) * (z1 - e2);
-      }
-    }
-    break;
-  default:
-    result = indelTrajectoryDegeneracy (zoneLengths);
-    verified = true;
-    break;
-  }
-  if (!verified) {
-    const int expected = indelTrajectoryDegeneracy (zoneLengths);
-    if (result != expected) {
-      cerr << "Zone lengths: " << to_string_join (zoneLengths) << endl;
-      cerr << "Expected degeneracy: " << expected << endl;
-      cerr << "Calculated degeneracy: " << result << endl;
-      throw std::runtime_error ("Fast degeneracy calculation failed");
-    }
-  }
-  return result;
 }
