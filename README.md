@@ -12,7 +12,7 @@ The "work" of the implementation is largely in counting trajectories and calcula
 
 ## Installation
 
-Boost is required for the command-line tool (though not if you just want to link to the C++ code).
+The [Boost](https://www.boost.org/) library is required for the command-line tool (though not if you just want to link to the C++ code).
 
 ~~~~
 make
