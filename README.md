@@ -1,6 +1,6 @@
 # trajectory-likelihood
 
-This is an expository implementation of the method to calculate alignment gap probabilities by trajectory enumeration, as described by Miklós, Lunter &amp; Holmes in the paper
+This is a reference implementation of the method to calculate alignment gap probabilities by trajectory enumeration, as described by Miklós, Lunter &amp; Holmes in the paper
 [A "Long Indel" model for evolutionary sequence alignment](https://www.ncbi.nlm.nih.gov/pubmed/14694074) (2004).
 
 The code includes an implementation of Algorithm 1 from the MLH 2004 paper, which computes the likelihood of a state trajectory in an arbitrary continuous-time discrete-state Markov chain,
