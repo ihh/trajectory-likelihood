@@ -375,9 +375,9 @@ int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
       } else if (ins1 && ins2 && !ins3) {  // ins,ins,del
 	if (z3 > 1) {
 	  if (z0 > 1) {
-	    result = 2 * ((e1 + 1) + (z2 - e3));
+	    result = 2 * ((e1 + 1) + min (min (e1 + 1, e2 + 1), min (e3 + 2 - z0, z2 - e3)));
 	  } else
-	    result = (e1 + 1) * (z2 - e3);
+	    result = z1 * (z2 - e3);
 	} else
 	  result = (z0 * z1) * (z2 - e3);
       } else if (ins1 && !ins2 && ins3) {  // ins,del,ins
@@ -385,10 +385,20 @@ int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
       } else if (ins1 && !ins2 && !ins3) {  // ins,del,del
 	if (z3 > 1) {
 	  if (z0 > 1) {
-	    if (e2 <= e1)
-	      result = 2 * ((e1 + 1 - e2) + (z2 - e3));
+	    const int aInit = z0 - 1;  // number of A's that must be deleted
+	    const int bFinal = z3 - 1;
+	    if (e2 + bFinal <= e1 && e3 >= aInit)  // first deletion doesn't remove any A's
+	      result += 2 * (e1 + 1 - e2);
+	    const int a2min = max (1, aInit - e3), a2max = min (aInit - 1, e2);  // a2 = # of A's removed by first deletion
+	    for (int a2 = a2min; a2 <= a2max; ++a2)
+	      result += 2 * (e2 > a2 ? 1 : (aInit + 1 - a2));
+	    if (e2 >= aInit)
+	      result += 2 * (z2 - e3);  // first deletion removes all the A's
+	    const int dmin = min (e2, e3);
+	    if (dmin >= aInit / 2)
+	      result += 2 * (aInit - 1);
 	    else
-	      result = 2 * (z1 - e2) * (z2 - e3);
+	      result += 2 * dmin;
 	  } else
 	    result = (z1 - e2) * (z2 - e3);
 	} else
