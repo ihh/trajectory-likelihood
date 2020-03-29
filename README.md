@@ -10,7 +10,7 @@ For clarity, this code currently makes the following simplifications relative to
 - Currently it only calculates the gap likelihoods for internal chop zones (i.e. not the regions at the ends of the sequence, nor the probability of deleting/inserting the entire sequence). This is equivalent to considering only infinitely long sequences.
 - Currently it does not use a mixture of geometric distributions for the indel lengths, just a single geometric distribution.
 
-Generalizing the code to cover these cases would be relatively straightforward, and only involve changing the calculation of zone exit probabilities and transition rates.
+Generalizing the code to cover these cases would be relatively straightforward, and only involve changing the calculation of zone exit and transition rates.
 The "work" of the implementation is largely in counting trajectories and calculating their probabilities.
 
 ## Installation
