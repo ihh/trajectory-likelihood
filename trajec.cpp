@@ -13,6 +13,11 @@ double transitionRateForZoneLengthChange (int srcZoneLength, int destZoneLength,
 vector<double> transitionRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params);
 bool trajectoryIsValid (const vector<int>& zoneLengths, int nInserted, int nDeleted);
 int indelTrajectoryDegeneracy (const vector<int>& zoneLengths);
+int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths);
+void appendToRunLengthEncodedSequence (vector<int>& seq, int chunk);
+bool runLengthEncodedSequenceHasNoAncestralResidues (const vector<int>& seq);
+void appendToRunLengthEncodedSequence (vector<int>& seq, int chunk);
+void mutateRunLengthEncodedSequence (const vector<int>& ancestor, int pos, int delta, vector<int>& descendant, int expectedLen);
 vector<Machine> makeEventMachines (const vector<int>& zoneLengths);
 Machine makeTrajectoryMachine (const vector<int>& zoneLengths);
 Machine makeInsertionMachine (int k);
@@ -20,7 +25,11 @@ Machine makeDeletionMachine (int k);
 int countTotalInsertions (const vector<int>& zoneLengths);
 int countTotalDeletions (const vector<int>& zoneLengths);
 void logTrajectoryLikelihood (const vector<int>& zoneLengths, double pTraj, const IndelParams& params, double time, const ChopZoneConfig& config, bool isValid);
-  
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 // function definitions
 bool doublesEqual (double a, double b) {
   const double diff = abs (a - b);
@@ -132,7 +141,7 @@ double indelTrajectoryLikelihood (const vector<int>& zoneLengths, const IndelPar
     throw std::runtime_error ("No two adjacent states in the trajectory can be identical");
   const vector<double> exitRates = exitRatesForZoneLengths (zoneLengths, params);
   const vector<double> transitionRates = transitionRatesForZoneLengths (zoneLengths, params);
-  return trajectoryLikelihood (exitRates, transitionRates, time) * indelTrajectoryDegeneracy (zoneLengths);
+  return trajectoryLikelihood (exitRates, transitionRates, time) * fastIndelTrajectoryDegeneracy (zoneLengths);
 }
 
 vector<double> exitRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params) {
@@ -334,4 +343,113 @@ vector<vector<double> > chopZoneLikelihoods (const IndelParams& params, double t
     probs.push_back (pd);
   }
   return probs;
+}
+
+int runLengthEncodedSequenceLength (const vector<int>& seq) {
+  int len = 0;
+  for (auto x: seq)
+    len += abs(x);
+  return len;
+}
+
+bool runLengthEncodedSequenceIsValid (const vector<int>& seq) {
+  for (int i = 0; i + 1 < seq.size(); ++i)
+    if (sgn(seq[i]) == sgn(seq[i+1]))
+      return false;
+  return true;
+}
+
+void appendToRunLengthEncodedSequence (vector<int>& seq, int chunk) {
+  if (seq.size() && sgn(chunk) == sgn(seq.back()))
+    seq.back() += chunk;
+  else
+    seq.push_back (chunk);
+}
+
+void mutateRunLengthEncodedSequence (const vector<int>& ancestor, int pos, int delta, vector<int>& descendant, int expectedLen) {
+  cerr << "Mutating (" << to_string_join(ancestor) << ") at " << pos << " by " << delta << endl;
+  Assert (runLengthEncodedSequenceIsValid(ancestor), "invalid sequence!");
+  Assert (pos + max(-delta,0) <= runLengthEncodedSequenceLength(ancestor), "overflow!");
+  descendant.clear();
+  int idx = 0;
+  while (pos > 0) {
+    const int nextChunkSize = abs (ancestor.at(idx));
+    if (pos < nextChunkSize)
+      break;
+    descendant.push_back (ancestor.at(idx++));
+    pos -= nextChunkSize;
+  }
+  if (delta > 0) {  // insertion
+    if (pos > 0 && idx < ancestor.size())
+      descendant.push_back (sgn(ancestor.at(idx)) * pos);
+    appendToRunLengthEncodedSequence (descendant, -delta);
+    if (idx < ancestor.size()) {
+      appendToRunLengthEncodedSequence (descendant, sgn(ancestor.at(idx)) * (abs(ancestor.at(idx)) - pos));
+      ++idx;
+    }
+  } else {  // deletion
+    int delSize = -delta, nextChunkSize = abs(ancestor.at(idx));
+    if (pos > 0) {
+      descendant.push_back (sgn(ancestor.at(idx)) * pos);
+      nextChunkSize -= pos;
+    }
+    while (delSize > 0 && delSize >= nextChunkSize) {
+      delSize -= nextChunkSize;
+      nextChunkSize = ++idx >= ancestor.size() ? 0 : abs(ancestor.at(idx));
+    }
+    if (nextChunkSize)
+      appendToRunLengthEncodedSequence (descendant, sgn(ancestor.at(idx++)) * (nextChunkSize - delSize));
+  }
+  while (idx < ancestor.size())
+    appendToRunLengthEncodedSequence (descendant, ancestor.at(idx++));
+  cerr << "Mutated (" << to_string_join(ancestor) << ") at " << pos << " by " << delta << " yielding (" << to_string_join(descendant) << ")" << endl;
+  Assert (runLengthEncodedSequenceLength(descendant) + 1 == expectedLen, "length is wrong");
+}
+
+bool runLengthEncodedSequenceHasNoAncestralResidues (const vector<int>& seq) {
+  return seq.size() == 0 || (seq.size() == 1 && seq[0] < 0);
+}
+
+int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
+  cerr << "Calculating degeneracy for zone lengths (" << to_string_join(zoneLengths) << ")" << endl;
+  if (zoneLengths.size() == 1 && zoneLengths[0] == 1)
+    return 1;
+  int result = 0;
+  const int nEvents = zoneLengths.size() - 1;
+  vector<int> delta (nEvents), eventPos (nEvents, 0), maxEventPos (nEvents);
+  for (int i = 0; i < nEvents; ++i) {
+    delta[i] = zoneLengths[i+1] - zoneLengths[i];
+    maxEventPos[i] = zoneLengths[i] + min (delta[i], 0) - 1;
+  }
+  vector<vector<int> > zoneSeq (zoneLengths.size());
+  if (zoneLengths[0] > 1)
+    zoneSeq[0].push_back (zoneLengths[0] - 1);
+  cerr << "Event offsets: (" << to_string_join(eventPos) << "), max (" << to_string_join(maxEventPos) << ")" << endl;
+  for (int i = 0; i < nEvents; ++i)
+    mutateRunLengthEncodedSequence (zoneSeq[i], eventPos[i], delta[i], zoneSeq[i+1], zoneLengths[i+1]);
+  while (true) {
+    if (runLengthEncodedSequenceHasNoAncestralResidues (zoneSeq[nEvents]))
+      ++result;
+    int i = nEvents - 1;
+    while (i >= 0)
+      if (++eventPos[i] > maxEventPos[i])
+	eventPos[i--] = 0;
+      else
+	break;
+    if (i < 0)
+      break;
+    cerr << "Event offsets: (" << to_string_join(eventPos) << "), max (" << to_string_join(maxEventPos) << ")" << endl;
+    for (int j = i; j < nEvents; ++j)
+      mutateRunLengthEncodedSequence (zoneSeq[j], eventPos[j], delta[j], zoneSeq[j+1], zoneLengths[j+1]);
+  }
+
+  const int expected = indelTrajectoryDegeneracy (zoneLengths);
+  if (result != expected) {
+    cerr << "Zone lengths: " << to_string_join (zoneLengths) << endl;
+    cerr << "Expected degeneracy: " << expected << endl;
+    cerr << "Calculated degeneracy: " << result << endl;
+    throw std::runtime_error ("Fast degeneracy calculation failed");
+  }
+
+  return result;
 }
