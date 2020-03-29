@@ -33,5 +33,5 @@ To compare to simulation results, run with the `--simulate` switch
 ./trajeclike --gamma .99 --mu .049 -r .543 --time 1 --maxlen 20 --simulate -v1
 ~~~~
 
-For more verbose logging, increase the verbosity `-v`.
+For more verbose logging, increase the verbosity (`-v`).
 For help, use `-h`.
