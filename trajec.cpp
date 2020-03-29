@@ -1,5 +1,4 @@
 #include <string>
-#include <sstream>
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
@@ -18,8 +17,6 @@ double indelTrajectoryLikelihood (const vector<int>& zoneLengths, const IndelPar
 bool anyIdenticalNeighbors (const vector<int>& list);
 double exitRateForZoneLength (int zoneLength, const IndelParams& params);
 vector<double> exitRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params);
-double insertionRate (int k, const IndelParams& params);
-double deletionRate (int k, const IndelParams& params);
 double transitionRateForZoneLengthChange (int srcZoneLength, int destZoneLength, const IndelParams& params);
 vector<double> transitionRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params);
 bool trajectoryIsValid (const vector<int>& zoneLengths, int nInserted, int nDeleted);
@@ -32,13 +29,7 @@ void mutateRunLengthEncodedSequence (const vector<int>& ancestor, int pos, int d
 int countTotalInsertions (const vector<int>& zoneLengths);
 int countTotalDeletions (const vector<int>& zoneLengths);
 void logTrajectoryLikelihood (const vector<int>& zoneLengths, double pTraj, const IndelParams& params, double time, const ChopZoneConfig& config, bool isValid);
-
-// Templates
-// sgn
-template <typename T> int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-}
-
+  
 // Function definitions
 void Abort(const char* error, ...) {
   va_list argptr;
@@ -185,23 +176,30 @@ bool anyIdenticalNeighbors (const vector<int>& list) {
 }
 
 double exitRateForZoneLength (int zoneLength, const IndelParams& params) {
-  const double lambdaSum = params.gamma * params.mu * (1-params.r) * (1-params.r) / (1 - params.gamma * params.r);
-  const double muSum = params.mu * (1 - params.r);
-  return zoneLength * (lambdaSum + muSum);
+  return zoneLength * (params.totalInsertionRatePerSite() + params.totalRightwardDeletionRatePerSite());
 }
 
-double insertionRate (int k, const IndelParams& params) {
-  return params.gamma * params.mu * (1 - params.r) * (1 - params.r) * pow (params.gamma * params.r, k-1);
+double IndelParams::insertionRate (int k) const {
+  return gamma * mu * (1 - r) * (1 - r) * pow (gamma * r, k-1);
 }
 
-double deletionRate (int k, const IndelParams& params) {
-  return params.mu * (1-params.r) * (1-params.r) * pow (params.r, k-1);
+double IndelParams::rightwardDeletionRate (int k) const {
+  return mu * (1 - r) * (1 - r) * pow (r, k-1);
+}
+
+double IndelParams::totalInsertionRatePerSite() const {
+  return gamma * mu * (1 - r) * (1 - r) / (1 - gamma * r);
+}
+
+double IndelParams::totalRightwardDeletionRatePerSite() const {
+  return mu * (1 - r);
 }
 
 double transitionRateForZoneLengthChange (int srcZoneLength, int destZoneLength, const IndelParams& params) {
-  return (destZoneLength > srcZoneLength
-          ? insertionRate (destZoneLength - srcZoneLength, params)
-          : deletionRate (srcZoneLength - destZoneLength, params));
+  const int delta = destZoneLength - srcZoneLength;
+  return (delta > 0
+          ? params.insertionRate (delta)
+          : params.rightwardDeletionRate (-delta));
 }
 
 // Calculate chop zone probabilities (internal zones i.e. not at the ends of the sequence)
@@ -245,22 +243,22 @@ double chopZoneLikelihood (int nDeleted, int nInserted, const IndelParams& param
       }
     }
   }
-  if (config.verbose)
+  if (config.verbose > 1)
     cerr << "Likelihood for (" << nDeleted << " deletions, " << nInserted << " insertions) is " << prob << endl;
   return prob;
 }
 
 void logTrajectoryLikelihood (const vector<int>& zoneLengths, double pTraj, const IndelParams& params, double time, const ChopZoneConfig& config, bool isValid) {
-  if (config.verbose > 1 && ((isValid && pTraj > 0) || config.verbose > 2)) {
+  if (config.verbose > 2 && ((isValid && pTraj > 0) || config.verbose > 3)) {
     cerr << "Zone lengths: [" << to_string_join(zoneLengths) << "]  ";
     if (isValid) {
-      if (config.verbose > 3) {
+      if (config.verbose > 4) {
 	const auto exitRates = exitRatesForZoneLengths (zoneLengths, params);
 	cerr << "Exit rates: [" << to_string_join(exitRates) << "]  ";
-	if (config.verbose > 4) {
+	if (config.verbose > 5) {
 	  const auto transitionRates = transitionRatesForZoneLengths (zoneLengths, params);
 	  cerr << "Transition rates: [" << to_string_join(transitionRates) << "]  ";
-	  if (config.verbose > 5) {
+	  if (config.verbose > 6) {
 	    const auto trajLike = trajectoryLikelihood (exitRates, transitionRates, time);
 	    const auto degen = indelTrajectoryDegeneracy (zoneLengths);
 	    cerr << "P(traj) " << trajLike << " #traj=" << degen << "  ";

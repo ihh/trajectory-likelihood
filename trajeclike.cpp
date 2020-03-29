@@ -1,6 +1,7 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include "trajec.h"
+#include "simulate.h"
 
 using namespace TrajectoryLikelihood;
 using namespace std;
@@ -16,7 +17,11 @@ int main (int argc, char** argv) {
     ("r,r", po::value<double>()->default_value(.543), "r parameter from MLH 2004 (parameter of geometric distribution over deletion lengths")
     ("time,t", po::value<double>()->default_value(1), "time parameter")
     ("maxevents,E", po::value<int>()->default_value(3), "max # of indel events in trajectory")
-    ("maxlen,L", po::value<int>()->default_value(10), "max length of chop zone");
+    ("maxlen,L", po::value<int>()->default_value(10), "max length of chop zone")
+    ("simulate,s", "perform stochastic simulation instead of likelihood calculation")
+    ("initlen,i", po::value<int>()->default_value(1000), "initial sequence length for simulation")
+    ("trials,n", po::value<int>()->default_value(100000), "number of simulation trials")
+    ("seed,d", po::value<int>()->default_value(mt19937::default_seed), "seed for random number generator");
 
     po::variables_map vm;
     po::parsed_options parsed = po::command_line_parser(argc,argv).options(opts).run();
@@ -29,17 +34,28 @@ int main (int argc, char** argv) {
     }
 
     const IndelParams params (vm.at("gamma").as<double>(), vm.at("mu").as<double>(), vm.at("r").as<double>());
-    const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), vm.at("verbose").as<int>());
     const double time = vm.at("time").as<double>();
-    
-    auto probs = chopZoneLikelihoods (params, time, config);
+
+    const int verbose = vm.at("verbose").as<int>();
+
+    vector<vector<double> > probs;
+
+    if (vm.count("simulate")) {
+      const SimulationConfig config (vm.at("initlen").as<int>(), vm.at("maxlen").as<int>(), vm.at("trials").as<int>(), verbose);
+      mt19937 rnd (vm.at("seed").as<int>());
+      probs = chopZoneSimulatedProbabilities (params, time, config, rnd);
+    } else {
+      const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), verbose);
+      probs = chopZoneLikelihoods (params, time, config);
+    }
+
     double total = 0;
     for (const auto& pd: probs) {
       for (double p: pd)
 	total += p;
       cout << to_string_join (pd) << endl;
     }
-    if (config.verbose) {
+    if (verbose) {
       cerr << "Entry in row i, column j is probability of deleting i residues and inserting j residues before the next match" << endl;
       cerr << "Total: " << total << endl;
     }

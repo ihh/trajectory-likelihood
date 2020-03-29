@@ -1,4 +1,8 @@
+#ifndef TRAJECTORY_LIKELIHOOD_INCLUDED
+#define TRAJECTORY_LIKELIHOOD_INCLUDED
+
 #include <vector>
+#include <sstream>
 
 namespace TrajectoryLikelihood {
 
@@ -15,6 +19,10 @@ namespace TrajectoryLikelihood {
     double gamma, mu, r;
     IndelParams() : gamma(1), mu(0), r(0) { }
     IndelParams (double g, double m, double r) : gamma(g), mu(m), r(r) { }
+    double insertionRate (int insertedLength) const;
+    double rightwardDeletionRate (int deletedLength) const;
+    double totalInsertionRatePerSite() const;
+    double totalRightwardDeletionRatePerSite() const;
   };
   
   // Config for chop zone probability calculations
@@ -30,7 +38,7 @@ namespace TrajectoryLikelihood {
   // Currently only implemented for internal zones i.e. not the zones at the ends of the sequence.
   double chopZoneLikelihood (int nDeleted, int nInserted, const IndelParams& params, double time, const ChopZoneConfig& config);
   vector<vector<double> > chopZoneLikelihoods (const IndelParams& params, double time, const ChopZoneConfig& config);   // result is indexed [nDeleted][nInserted]
-
+  
   // Templates
   // to_string_join
   template<class Container>
@@ -45,4 +53,10 @@ namespace TrajectoryLikelihood {
     return j.str();
   }
 
+  // sgn
+  template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+  }
 }
+
+#endif /* TRAJECTORY_LIKELIHOOD_INCLUDED */
