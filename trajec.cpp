@@ -1,6 +1,17 @@
+#include <string>
+#include <sstream>
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
+
 #include "trajec.h"
 
-// private function prototypes
+namespace TrajectoryLikelihood {
+
+#define Assert(assertion,...) do { if (!(assertion)) Abort("Assertion Failed: " __VA_ARGS__); } while (0)
+
+// Private function prototypes
+void Abort(const char* error, ...);
 double factorial (int n);
 bool doublesEqual (double a, double b);
 double indelTrajectoryLikelihood (const vector<int>& zoneLengths, const IndelParams& params, double time);
@@ -12,25 +23,33 @@ double deletionRate (int k, const IndelParams& params);
 double transitionRateForZoneLengthChange (int srcZoneLength, int destZoneLength, const IndelParams& params);
 vector<double> transitionRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params);
 bool trajectoryIsValid (const vector<int>& zoneLengths, int nInserted, int nDeleted);
-int indelTrajectoryDegeneracy (const vector<int>& zoneLengths);
-int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths);
-void appendToRunLengthEncodedSequence (vector<int>& seq, int chunk);
+int indelTrajectoryDegeneracy (const vector<int>& zoneLengths, bool lastResidueConserved = true);  // lastResidueConserved is true for chop zones inside the sequence & at the left end
 bool runLengthEncodedSequenceHasNoAncestralResidues (const vector<int>& seq);
+bool runLengthEncodedSequenceIsValid (const vector<int>& seq);
+int runLengthEncodedSequenceLength (const vector<int>& seq);
 void appendToRunLengthEncodedSequence (vector<int>& seq, int chunk);
 void mutateRunLengthEncodedSequence (const vector<int>& ancestor, int pos, int delta, vector<int>& descendant, int expectedLen);
-vector<Machine> makeEventMachines (const vector<int>& zoneLengths);
-Machine makeTrajectoryMachine (const vector<int>& zoneLengths);
-Machine makeInsertionMachine (int k);
-Machine makeDeletionMachine (int k);
 int countTotalInsertions (const vector<int>& zoneLengths);
 int countTotalDeletions (const vector<int>& zoneLengths);
 void logTrajectoryLikelihood (const vector<int>& zoneLengths, double pTraj, const IndelParams& params, double time, const ChopZoneConfig& config, bool isValid);
 
+// Templates
+// sgn
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
-// function definitions
+// Function definitions
+void Abort(const char* error, ...) {
+  va_list argptr;
+  va_start (argptr, error);
+  fprintf(stderr,"Abort: ");
+  vfprintf(stderr,error,argptr);
+  fprintf(stderr,"\n");
+  va_end (argptr);
+  throw runtime_error("Abort");
+}
+
 bool doublesEqual (double a, double b) {
   const double diff = abs (a - b);
   return diff < std::numeric_limits<double>::epsilon();
@@ -109,7 +128,7 @@ double trajectoryLikelihood (const vector<double>& exitRates,
   return P;
 }
 
-vguard<double> precomputedFactorial (1, 1);
+vector<double> precomputedFactorial (1, 1);
 double factorial (int n) {
   if (n < 0)
     throw std::runtime_error ("Factorial function defined for nonnegative integers only");
@@ -126,7 +145,7 @@ double factorial (int n) {
 //  AAAM -> AAABBBBM -> ABBM -> BBM
 // There are also invalid trajectories with the same zone lengths, e.g.
 //  AAAM -> AAABBBBM -> AAAM -> AAM  (not allowed; we can't have any A's left at the end)
-// We count the number of valid trajectories using a finite-state machine approach.
+// We count the number of valid trajectories by enumeration, using run-length encoding to compress the sequences.
 double indelTrajectoryLikelihood (const vector<int>& zoneLengths, const IndelParams& params, double time) {
   const int N = zoneLengths.size();
   if (time < 0)
@@ -141,7 +160,7 @@ double indelTrajectoryLikelihood (const vector<int>& zoneLengths, const IndelPar
     throw std::runtime_error ("No two adjacent states in the trajectory can be identical");
   const vector<double> exitRates = exitRatesForZoneLengths (zoneLengths, params);
   const vector<double> transitionRates = transitionRatesForZoneLengths (zoneLengths, params);
-  return trajectoryLikelihood (exitRates, transitionRates, time) * fastIndelTrajectoryDegeneracy (zoneLengths);
+  return trajectoryLikelihood (exitRates, transitionRates, time) * indelTrajectoryDegeneracy (zoneLengths);
 }
 
 vector<double> exitRatesForZoneLengths (const vector<int>& zoneLengths, const IndelParams& params) {
@@ -185,62 +204,6 @@ double transitionRateForZoneLengthChange (int srcZoneLength, int destZoneLength,
           : deletionRate (srcZoneLength - destZoneLength, params));
 }
 
-const vector<string> wildChars = { string("A"), string("B") };
-const Machine wildEcho = Machine::wildEcho (wildChars);
-int indelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
-  if (zoneLengths.size() == 1)  // catch the special case where there is no machine to create
-    return 1;
-  const Machine machine = makeTrajectoryMachine (zoneLengths);
-  const EvaluatedMachine eval (machine);
-  SeqPair seqPair;
-  seqPair.input.seq = vector<string> (zoneLengths[0] - 1, string("A"));
-  seqPair.output.seq = vector<string> (zoneLengths[zoneLengths.size() - 1] - 1, string("B"));
-  const RollingOutputForwardMatrix fwd (eval, seqPair);
-  return (int) (.5 + exp (fwd.logLike()));
-}
-
-Machine makeTrajectoryMachine (const vector<int>& zoneLengths) {
-  Machine machine = wildEcho;
-  const vector<Machine> eventMachines = makeEventMachines (zoneLengths);
-  for (const auto& eventMachine: eventMachines)
-    machine = Machine::compose (machine, eventMachine);
-  return machine;
-}
-
-vector<Machine> makeEventMachines (const vector<int>& zoneLengths) {
-  vector<Machine> machines;
-  for (int n = 0; n + 1 < zoneLengths.size(); ++n) {
-    const int deltaLength = zoneLengths[n+1] - zoneLengths[n];
-    const Machine deltaMachine = (deltaLength > 0
-				  ? makeInsertionMachine (deltaLength)
-				  : makeDeletionMachine (-deltaLength));
-    machines.push_back (deltaMachine);
-  }
-  return machines;
-}
-
-vector<Machine> insertionMachine (1, Machine::null());
-Machine makeInsertionMachine (int k) {
-  while (insertionMachine.size() <= k)
-    insertionMachine.push_back (Machine::concatenate
-				(Machine::concatenate (wildEcho,
-						       Machine::generator (vector<string> (insertionMachine.size(),
-											   string("B")))),
-				 wildEcho));
-  return insertionMachine[k];
-}
-
-vector<Machine> deletionMachine (1, Machine::null());
-const Machine singleDelete = Machine::wildSingleRecognizer (wildChars);
-Machine makeDeletionMachine (int k) {
-  while (deletionMachine.size() <= k)
-    deletionMachine.push_back (Machine::concatenate
-			       (Machine::concatenate (wildEcho,
-						      Machine::repeat (singleDelete, deletionMachine.size())),
-				wildEcho));
-  return deletionMachine[k];
-}
-
 // Calculate chop zone probabilities (internal zones i.e. not at the ends of the sequence)
 double chopZoneLikelihood (int nDeleted, int nInserted, const IndelParams& params, double time, const ChopZoneConfig& config) {
   double prob = 0;
@@ -282,20 +245,22 @@ double chopZoneLikelihood (int nDeleted, int nInserted, const IndelParams& param
       }
     }
   }
+  if (config.verbose)
+    cerr << "Likelihood for (" << nDeleted << " deletions, " << nInserted << " insertions) is " << prob << endl;
   return prob;
 }
 
 void logTrajectoryLikelihood (const vector<int>& zoneLengths, double pTraj, const IndelParams& params, double time, const ChopZoneConfig& config, bool isValid) {
-  if (config.verbose && ((isValid && pTraj > 0) || config.verbose > 1)) {
+  if (config.verbose > 1 && ((isValid && pTraj > 0) || config.verbose > 2)) {
     cerr << "Zone lengths: [" << to_string_join(zoneLengths) << "]  ";
     if (isValid) {
-      if (config.verbose > 2) {
+      if (config.verbose > 3) {
 	const auto exitRates = exitRatesForZoneLengths (zoneLengths, params);
 	cerr << "Exit rates: [" << to_string_join(exitRates) << "]  ";
-	if (config.verbose > 3) {
+	if (config.verbose > 4) {
 	  const auto transitionRates = transitionRatesForZoneLengths (zoneLengths, params);
 	  cerr << "Transition rates: [" << to_string_join(transitionRates) << "]  ";
-	  if (config.verbose > 4) {
+	  if (config.verbose > 5) {
 	    const auto trajLike = trajectoryLikelihood (exitRates, transitionRates, time);
 	    const auto degen = indelTrajectoryDegeneracy (zoneLengths);
 	    cerr << "P(traj) " << trajLike << " #traj=" << degen << "  ";
@@ -303,12 +268,6 @@ void logTrajectoryLikelihood (const vector<int>& zoneLengths, double pTraj, cons
 	}
       }
       cerr << "Probability: " << pTraj << endl;
-      if (isValid && pTraj > 0 && config.verbose > 5) {
-	if (config.verbose > 6)
-	  for (const auto& e: makeEventMachines (zoneLengths))
-	    e.writeJson (cerr);
-	makeTrajectoryMachine (zoneLengths).writeJson (cerr);
-      }
     } else
       cerr << "Invalid" << endl;
   }
@@ -367,52 +326,53 @@ void appendToRunLengthEncodedSequence (vector<int>& seq, int chunk) {
 }
 
 void mutateRunLengthEncodedSequence (const vector<int>& ancestor, int pos, int delta, vector<int>& descendant, int expectedLen) {
-  cerr << "Mutating (" << to_string_join(ancestor) << ") at " << pos << " by " << delta << endl;
+  //  cerr << "Mutating (" << to_string_join(ancestor) << ") at " << pos << " by " << delta << endl;
   Assert (runLengthEncodedSequenceIsValid(ancestor), "invalid sequence!");
   Assert (pos + max(-delta,0) <= runLengthEncodedSequenceLength(ancestor), "overflow!");
   descendant.clear();
   int idx = 0;
   while (pos > 0) {
-    const int nextChunkSize = abs (ancestor.at(idx));
+    const int nextChunkSize = abs (ancestor[idx]);
     if (pos < nextChunkSize)
       break;
-    descendant.push_back (ancestor.at(idx++));
+    descendant.push_back (ancestor[idx++]);
     pos -= nextChunkSize;
   }
   if (delta > 0) {  // insertion
     if (pos > 0 && idx < ancestor.size())
-      descendant.push_back (sgn(ancestor.at(idx)) * pos);
+      descendant.push_back (sgn(ancestor[idx]) * pos);
     appendToRunLengthEncodedSequence (descendant, -delta);
     if (idx < ancestor.size()) {
-      appendToRunLengthEncodedSequence (descendant, sgn(ancestor.at(idx)) * (abs(ancestor.at(idx)) - pos));
+      appendToRunLengthEncodedSequence (descendant, sgn(ancestor[idx]) * (abs(ancestor[idx]) - pos));
       ++idx;
     }
   } else {  // deletion
-    int delSize = -delta, nextChunkSize = abs(ancestor.at(idx));
+    int delSize = -delta, nextChunkSize = abs(ancestor[idx]);
     if (pos > 0) {
-      descendant.push_back (sgn(ancestor.at(idx)) * pos);
+      descendant.push_back (sgn(ancestor[idx]) * pos);
       nextChunkSize -= pos;
     }
     while (delSize > 0 && delSize >= nextChunkSize) {
       delSize -= nextChunkSize;
-      nextChunkSize = ++idx >= ancestor.size() ? 0 : abs(ancestor.at(idx));
+      nextChunkSize = ++idx >= ancestor.size() ? 0 : abs(ancestor[idx]);
     }
     if (nextChunkSize)
-      appendToRunLengthEncodedSequence (descendant, sgn(ancestor.at(idx++)) * (nextChunkSize - delSize));
+      appendToRunLengthEncodedSequence (descendant, sgn(ancestor[idx++]) * (nextChunkSize - delSize));
   }
   while (idx < ancestor.size())
-    appendToRunLengthEncodedSequence (descendant, ancestor.at(idx++));
-  cerr << "Mutated (" << to_string_join(ancestor) << ") at " << pos << " by " << delta << " yielding (" << to_string_join(descendant) << ")" << endl;
-  Assert (runLengthEncodedSequenceLength(descendant) + 1 == expectedLen, "length is wrong");
+    appendToRunLengthEncodedSequence (descendant, ancestor[idx++]);
+  //  cerr << "Mutated (" << to_string_join(ancestor) << ") at " << pos << " by " << delta << " yielding (" << to_string_join(descendant) << ")" << endl;
+  Assert (runLengthEncodedSequenceLength(descendant) == expectedLen, "length is wrong");
 }
 
 bool runLengthEncodedSequenceHasNoAncestralResidues (const vector<int>& seq) {
   return seq.size() == 0 || (seq.size() == 1 && seq[0] < 0);
 }
 
-int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
-  cerr << "Calculating degeneracy for zone lengths (" << to_string_join(zoneLengths) << ")" << endl;
-  if (zoneLengths.size() == 1 && zoneLengths[0] == 1)
+int indelTrajectoryDegeneracy (const vector<int>& zoneLengths, bool lastResidueConserved) {
+  //  cerr << "Calculating degeneracy for zone lengths (" << to_string_join(zoneLengths) << ")" << endl;
+  const int conservedResidues = lastResidueConserved ? 1 : 0;
+  if (zoneLengths.size() == 1 && zoneLengths[0] == conservedResidues)
     return 1;
   int result = 0;
   const int nEvents = zoneLengths.size() - 1;
@@ -422,11 +382,11 @@ int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
     maxEventPos[i] = zoneLengths[i] + min (delta[i], 0) - 1;
   }
   vector<vector<int> > zoneSeq (zoneLengths.size());
-  if (zoneLengths[0] > 1)
-    zoneSeq[0].push_back (zoneLengths[0] - 1);
-  cerr << "Event offsets: (" << to_string_join(eventPos) << "), max (" << to_string_join(maxEventPos) << ")" << endl;
+  if (zoneLengths[0] > conservedResidues)
+    zoneSeq[0].push_back (zoneLengths[0] - conservedResidues);
+  //  cerr << "Event offsets: (" << to_string_join(eventPos) << "), max (" << to_string_join(maxEventPos) << ")" << endl;
   for (int i = 0; i < nEvents; ++i)
-    mutateRunLengthEncodedSequence (zoneSeq[i], eventPos[i], delta[i], zoneSeq[i+1], zoneLengths[i+1]);
+    mutateRunLengthEncodedSequence (zoneSeq[i], eventPos[i], delta[i], zoneSeq[i+1], zoneLengths[i+1] - conservedResidues);
   while (true) {
     if (runLengthEncodedSequenceHasNoAncestralResidues (zoneSeq[nEvents]))
       ++result;
@@ -438,18 +398,12 @@ int fastIndelTrajectoryDegeneracy (const vector<int>& zoneLengths) {
 	break;
     if (i < 0)
       break;
-    cerr << "Event offsets: (" << to_string_join(eventPos) << "), max (" << to_string_join(maxEventPos) << ")" << endl;
+    //    cerr << "Event offsets: (" << to_string_join(eventPos) << "), max (" << to_string_join(maxEventPos) << ")" << endl;
     for (int j = i; j < nEvents; ++j)
-      mutateRunLengthEncodedSequence (zoneSeq[j], eventPos[j], delta[j], zoneSeq[j+1], zoneLengths[j+1]);
-  }
-
-  const int expected = indelTrajectoryDegeneracy (zoneLengths);
-  if (result != expected) {
-    cerr << "Zone lengths: " << to_string_join (zoneLengths) << endl;
-    cerr << "Expected degeneracy: " << expected << endl;
-    cerr << "Calculated degeneracy: " << result << endl;
-    throw std::runtime_error ("Fast degeneracy calculation failed");
+      mutateRunLengthEncodedSequence (zoneSeq[j], eventPos[j], delta[j], zoneSeq[j+1], zoneLengths[j+1] - conservedResidues);
   }
 
   return result;
+}
+
 }

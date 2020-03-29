@@ -1,6 +1,9 @@
+#include <iostream>
 #include <boost/program_options.hpp>
 #include "trajec.h"
 
+using namespace TrajectoryLikelihood;
+using namespace std;
 namespace po = boost::program_options;
 
 int main (int argc, char** argv) {
@@ -9,8 +12,8 @@ int main (int argc, char** argv) {
     ("help,h", "display this help message")
     ("verbose,v", po::value<int>()->default_value(0), "logging verbosity")
     ("gamma", po::value<double>()->default_value(.99), "gamma parameter from MLH 2004 (parameter of equilibrium geometric distribution over sequence lengths)")
-    ("mu", po::value<double>()->default_value(.05), "mu parameter from MLH 2004 (rightward deletion rate)")
-    ("r,r", po::value<double>()->default_value(.01), "r parameter from MLH 2004 (parameter of geometric distribution over deletion lengths")
+    ("mu", po::value<double>()->default_value(.049), "mu parameter from MLH 2004 (rightward deletion rate)")
+    ("r,r", po::value<double>()->default_value(.543), "r parameter from MLH 2004 (parameter of geometric distribution over deletion lengths")
     ("time,t", po::value<double>()->default_value(1), "time parameter")
     ("maxevents,E", po::value<int>()->default_value(3), "max # of indel events in trajectory")
     ("maxlen,L", po::value<int>()->default_value(10), "max length of chop zone");
@@ -36,7 +39,10 @@ int main (int argc, char** argv) {
 	total += p;
       cout << to_string_join (pd) << endl;
     }
-    cerr << "Total: " << total << endl;
+    if (config.verbose) {
+      cerr << "Entry in row i, column j is probability of deleting i residues and inserting j residues before the next match" << endl;
+      cerr << "Total: " << total << endl;
+    }
 
     return EXIT_SUCCESS;
 }
