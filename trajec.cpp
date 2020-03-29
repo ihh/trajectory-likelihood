@@ -304,6 +304,10 @@ vector<vector<double> > chopZoneLikelihoods (const IndelParams& params, double t
   return probs;
 }
 
+// For checking whether a given set of positioned events delete all ancestral residues in a sequence,
+// we use a succinct run-length encoded representation of the sequence.
+// A positive integer +N denotes a run of N consecutive ancestral residues;
+// a negative integer -N denotes a run of N consecutive inserted residues.
 int runLengthEncodedSequenceLength (const vector<int>& seq) {
   int len = 0;
   for (auto x: seq)
@@ -325,6 +329,9 @@ void appendToRunLengthEncodedSequence (vector<int>& seq, int chunk) {
     seq.push_back (chunk);
 }
 
+// In this function, a positive delta denotes an insertion of +delta residues after the first pos residues,
+// whereas a negative delta denotes a deletion of -delta residues starting at the residue after the first pos residues
+// (i.e. a deletion with pos=0 starts deleting at the first residue in the sequence).
 void mutateRunLengthEncodedSequence (const vector<int>& ancestor, int pos, int delta, vector<int>& descendant, int expectedLen) {
   //  cerr << "Mutating (" << to_string_join(ancestor) << ") at " << pos << " by " << delta << endl;
   Assert (runLengthEncodedSequenceIsValid(ancestor), "invalid sequence!");
