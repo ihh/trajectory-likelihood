@@ -1,9 +1,9 @@
 # trajectory-likelihood
 
-Calculate indel probabilities using the trajectory enumeration method of Miklos, Lunter &amp; Holmes (2004),
-[A "Long Indel" model for evolutionary sequence alignment](https://www.ncbi.nlm.nih.gov/pubmed/14694074).
+This is an expository implementation of the method to calculate alignment gap probabilities by trajectory enumeration, as described by Miklos, Lunter &amp; Holmes in the paper
+[A "Long Indel" model for evolutionary sequence alignment](https://www.ncbi.nlm.nih.gov/pubmed/14694074) (2004).
 
-This code includes an implementation of Algorithm 1 from the MLH 2004 paper, which computes the likelihood of a state trajectory in a continuous-time Markov chain,
+This code includes an implementation of Algorithm 1 from the MLH 2004 paper, which computes the likelihood of a state trajectory in an arbitrary continuous-time discrete-state Markov chain,
 with event times integrated out.
 
 For clarity, this code currently makes the following simplifications relative to the full "Long Indel" model described in the paper:
