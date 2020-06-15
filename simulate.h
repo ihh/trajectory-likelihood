@@ -19,6 +19,6 @@ namespace TrajectoryLikelihood {
   };
   
   SimulationCounts chopZoneSimulatedCounts (const IndelParams& params, double time, const SimulationConfig& config, mt19937& rnd);   // result is indexed [nDeleted][nInserted]
-  vector<vector<double> > chopZoneSimulatedProbabilities (const IndelParams& params, double time, const SimulationConfig& config, mt19937& rnd);
+  vector<vector<double> > chopZoneSimulatedProbabilities (const IndelParams& params, double time, const SimulationConfig& config, mt19937& rnd, bool reportCountsInstead = false);
   void simulateIndels (vector<int>& seq, const IndelParams& params, double time, mt19937& rnd, int verbose, int insertedValue = 0);
 }

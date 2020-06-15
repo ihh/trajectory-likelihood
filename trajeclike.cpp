@@ -19,6 +19,7 @@ int main (int argc, char** argv) {
     ("maxevents,E", po::value<int>()->default_value(3), "max # of indel events in trajectory")
     ("maxlen,L", po::value<int>()->default_value(10), "max length of chop zone")
     ("simulate,s", "perform stochastic simulation instead of likelihood calculation")
+    ("counts,c", "report simulation counts instead of probabilities")
     ("initlen,i", po::value<int>()->default_value(1000), "initial sequence length for simulation")
     ("trials,n", po::value<int>()->default_value(100000), "number of simulation trials")
     ("seed,d", po::value<int>()->default_value(mt19937::default_seed), "seed for random number generator");
@@ -38,12 +39,13 @@ int main (int argc, char** argv) {
 
     const int verbose = vm.at("verbose").as<int>();
 
+    const bool reportCounts = vm.count("simulate") && vm.count("counts");
     vector<vector<double> > probs;
 
     if (vm.count("simulate")) {
       const SimulationConfig config (vm.at("initlen").as<int>(), vm.at("maxlen").as<int>(), vm.at("trials").as<int>(), verbose);
       mt19937 rnd (vm.at("seed").as<int>());
-      probs = chopZoneSimulatedProbabilities (params, time, config, rnd);
+      probs = chopZoneSimulatedProbabilities (params, time, config, rnd, reportCounts);
     } else {
       const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), verbose);
       probs = chopZoneLikelihoods (params, time, config);
@@ -56,7 +58,9 @@ int main (int argc, char** argv) {
       cout << to_string_join (pd) << endl;
     }
     if (verbose) {
-      cerr << "Entry in row i, column j is probability of deleting i residues and inserting j residues before the next match" << endl;
+      cerr << "Entry in row i, column j is " << (reportCounts ? "count" : "probability") << " of deleting i residues and inserting j residues before the next match" << endl;
+      if (reportCounts)
+	cerr << "Final count represents overflow (chop zones that were larger than size limit)" << endl;
       cerr << "Total: " << total << endl;
     }
 
