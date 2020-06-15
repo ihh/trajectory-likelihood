@@ -34,4 +34,6 @@ To compare to simulation results, run with the `--simulate` switch
 ~~~~
 
 For more verbose logging, increase the verbosity (`-v`).
+For example, `-v1` will display a legend for the output probability matrix. Higher verbosity levels will display more information, such as progress messages.
+
 For help, use `-h`.
