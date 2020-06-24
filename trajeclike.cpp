@@ -2,6 +2,7 @@
 #include <boost/program_options.hpp>
 #include "trajec.h"
 #include "simulate.h"
+#include "moments.h"
 
 using namespace TrajectoryLikelihood;
 using namespace std;
@@ -22,6 +23,8 @@ int main (int argc, char** argv) {
     ("counts,c", "report simulation counts instead of probabilities")
     ("initlen,i", po::value<int>()->default_value(1000), "initial sequence length for simulation")
     ("trials,n", po::value<int>()->default_value(100000), "number of simulation trials")
+    ("moments,m", "use method of moments for likelihood calculations")
+    ("dt,D", po::value<double>()->default_value(.01), "time step for numerical integration")
     ("seed,d", po::value<int>()->default_value(mt19937::default_seed), "seed for random number generator");
 
     po::variables_map vm;
@@ -46,6 +49,9 @@ int main (int argc, char** argv) {
       const SimulationConfig config (vm.at("initlen").as<int>(), vm.at("maxlen").as<int>(), vm.at("trials").as<int>(), verbose);
       mt19937 rnd (vm.at("seed").as<int>());
       probs = chopZoneSimulatedProbabilities (params, time, config, rnd, reportCounts);
+    } else if (vm.count("moments")) {
+      const Moments moments (params, time, vm.at("dt").as<double>(), verbose);
+      probs = moments.chopZoneLikelihoods (vm.at("maxlen").as<int>());
     } else {
       const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), verbose);
       probs = chopZoneLikelihoods (params, time, config);
