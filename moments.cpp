@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include "moments.h"
 #include "rk4.h"
 
@@ -16,6 +17,9 @@ namespace TrajectoryLikelihood {
     if (params.gamma != 1)
       throw runtime_error ("must have gamma=1 for moment-based approach");
 
+    if (verbose > 1)
+      cerr << "Moments method: rate=" << mu << " e=" << e << endl;
+
     auto eval_dmc_dt = [&] (double t, const vector<double>& mc, vector<double>& dmc_dt) {
       const double M = mc[0];
       const double C = mc[1];
@@ -30,8 +34,12 @@ namespace TrajectoryLikelihood {
     MC[0][0] = 1.;
     MC[0][1] = 0.;
     RungeKutta4 mc_solver (2);
-    for (int t = 1; t < MC.size(); ++t)
-      mc_solver.step (eval_dmc_dt, dt * (double) t, dt, MC[t-1], MC[t]);
+    for (int i = 1; i < MC.size(); ++i) {
+      const double t = dt * (double) i;
+      mc_solver.step (eval_dmc_dt, t, dt, MC[i-1], MC[i]);
+      if (verbose > 1)
+	cerr << "t=" << t << " M=" << MC[i][0] << " L=" << L(t) << " C=" << MC[i][1] << endl;
+    }
   }
 
   double Moments::L (double t) const {
@@ -44,7 +52,7 @@ namespace TrajectoryLikelihood {
   
   double Moments::q (double M, double C, double t) const {
     const double L = this->L(t);
-    return (4*L*L*(1+M) - C*(1-M)*(1+2*L+M)) / (8*L*L - 2*C*(1+L)*(1-M));
+    return (4*L*L*(2*L+M-1) + C*(M-1)*(4*L+M-1)) / (8*L*L*L - 4*C*L*(M-1));
   }
   
   double Moments::r (double M, double C, double t) const {
@@ -54,12 +62,12 @@ namespace TrajectoryLikelihood {
   
   double Moments::alpha (double M, double C, double t) const {
     const double L = this->L(t);
-    return C*C*(1-M) - C*L*(2*L*(1+M)-3*(1-M)) - 2*L*L*(2*L*(3+2*L) - e*(L*(1+M) - (1-M))) / (1-e);
+    return C * (1 - e) * (C * (M - 1) + L * (3 * (M - 1) + 2 * L * (1 + M))) + 2 * L * L * (2 * L * (3 + 2 * L) - e * (L * M + L + M - 1));
   }
   
   double Moments::beta (double M, double C, double t) const {
     const double L = this->L(t);
-    return C*(1-e)*(1-M) + 2*L*(-2*L + e*(L*(1+M) - (1-M)));
+    return (1 - e) * (C * (1 - e) * (M - 1) + 2 * L * (2 * L - e * (L * M + L + M - 1)));
   }
 
   vector<vector<double> > Moments::chopZoneLikelihoods (int maxLen) const {
@@ -68,14 +76,25 @@ namespace TrajectoryLikelihood {
     const double M = mc[0], C = mc[1];
     const double t = tMax;
     const double p = this->p(M,C,t), q = this->q(M,C,t), r = this->r(M,C,t);
+    if (verbose)
+      cerr << "p=" << p << " q=" << q << " r=" << r << endl;
     vector<vector<vector<double> > > fwd (2, vector<vector<double> > (maxLen + 1, vector<double> (2, 0)));  // fwd[i%2][j][state] where i=#ins, j=#del, state = 0(ins) or 1(del)
     for (int i = 0; i <= maxLen; ++i) {
       const int row = i % 2;
       const int prev = (i - 1) % 2;
       for (int j = 0; j <= maxLen; ++j) {
-	const double init = (i == 0 && j == 0) ? ((1-p) / 2) : 0;
-	fwd[row][j][0] = init + (i > 0 ? (fwd[prev][j][0] * q) : 0) + (j > 0 ? (fwd[row][j-1][1] * (1-q) * r) : 0);
-	fwd[row][j][1] = init + (i > 0 ? (fwd[prev][j][0] * (1-q) * r) : 0) + (j > 0 ? (fwd[row][j-1][1] * q) : 0);
+	fwd[row][j][0] = (i == 0
+			  ? 0
+			  : ((i == 1 && j == 0 ? ((1 - p) / 2) : 0)
+			     + fwd[prev][j][1] * (1-q) * r
+			     + fwd[prev][j][0] * q));
+
+	fwd[row][j][1] = (j == 0
+			  ? 0
+			  : ((j == 1 && i == 0 ? ((1 - p) / 2) : 0)
+			     + fwd[row][j-1][0] * (1-q) * r
+			     + fwd[row][j-1][1] * q));
+	
 	pGap[i][j] = (i == 0 && j == 0
 		      ? p
 		      : ((fwd[row][j][0] + fwd[row][j][1]) * (1-q) * (1-r)));
