@@ -3,6 +3,7 @@
 #include "trajec.h"
 #include "simulate.h"
 #include "moments.h"
+#include "cim.h"
 
 using namespace TrajectoryLikelihood;
 using namespace std;
@@ -24,6 +25,7 @@ int main (int argc, char** argv) {
     ("initlen,i", po::value<int>()->default_value(1000), "initial sequence length for simulation")
     ("trials,n", po::value<int>()->default_value(100000), "number of simulation trials")
     ("moments,m", "use method of moments for likelihood calculations")
+    ("cim,C", "use de Maio's Cumulative Indel Model for likelihood calculations")
     ("dt,D", po::value<double>()->default_value(.01), "time step for numerical integration")
     ("seed,d", po::value<int>()->default_value(mt19937::default_seed), "seed for random number generator");
 
@@ -52,6 +54,9 @@ int main (int argc, char** argv) {
     } else if (vm.count("moments")) {
       const Moments moments (params, time, vm.at("dt").as<double>(), verbose);
       probs = moments.chopZoneLikelihoods (vm.at("maxlen").as<int>());
+    } else if (vm.count("cim")) {
+      const CumulativeIndelModel cim (params, time, vm.at("dt").as<double>(), verbose);
+      probs = cim.chopZoneLikelihoods (vm.at("maxlen").as<int>());
     } else {
       const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), verbose);
       probs = chopZoneLikelihoods (params, time, config);
