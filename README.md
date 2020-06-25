@@ -38,3 +38,9 @@ For more verbose logging, increase the verbosity (`-v`).
 For example, `-v1` will display a legend for the output probability matrix. Higher verbosity levels will display more information, such as progress messages.
 
 For help, use `-h`.
+
+## Analysis
+
+If you turn on verbose logging (`-v1`), the program will report summary statistics including the moments of the gap length distribution.
+
+The node script `relent.js` can be used to compute the relative entropy between gap length distributions computed using different methods.

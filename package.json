@@ -1,0 +1,22 @@
+{
+  "name": "trajectory-likelihood",
+  "version": "1.0.0",
+  "description": "Statistical alignment methods for calculating gap likelihoods.",
+  "dependencies": {
+    "node-getopt": "^0.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ihh/trajectory-likelihood.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ihh/trajectory-likelihood/issues"
+  },
+  "homepage": "https://github.com/ihh/trajectory-likelihood#readme"
+}

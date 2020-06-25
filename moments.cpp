@@ -37,7 +37,7 @@ namespace TrajectoryLikelihood {
     for (int i = 1; i < MC.size(); ++i) {
       const double t = dt * (double) i;
       mc_solver.step (eval_dmc_dt, t, dt, MC[i-1], MC[i]);
-      if (verbose > 1)
+      if (verbose > 2)
 	cerr << "t=" << t << " M=" << MC[i][0] << " L=" << L(t) << " C=" << MC[i][1] << endl;
     }
   }
@@ -52,7 +52,7 @@ namespace TrajectoryLikelihood {
   
   double Moments::q (double M, double C, double t) const {
     const double L = this->L(t);
-    return (4*L*L*(2*L+M-1) + C*(M-1)*(4*L+M-1)) / (8*L*L*L - 4*C*L*(M-1));
+    return (4*L*L*(2*L+M-1) + C*(M-1)*(4*L+M-1)) / (8*L*L*L + 4*C*L*(M-1));
   }
   
   double Moments::r (double M, double C, double t) const {
@@ -76,8 +76,8 @@ namespace TrajectoryLikelihood {
     const double M = mc[0], C = mc[1];
     const double t = tMax;
     const double p = this->p(M,C,t), q = this->q(M,C,t), r = this->r(M,C,t);
-    if (verbose)
-      cerr << "p=" << p << " q=" << q << " r=" << r << endl;
+    if (verbose > 2)
+      cerr << "Pair HMM probability parameters: p=" << p << " q=" << q << " r=" << r << endl;
     vector<vector<vector<double> > > fwd (2, vector<vector<double> > (maxLen + 1, vector<double> (2, 0)));  // fwd[i%2][j][state] where i=#ins, j=#del, state = 0(ins) or 1(del)
     for (int i = 0; i <= maxLen; ++i) {
       const int row = i % 2;

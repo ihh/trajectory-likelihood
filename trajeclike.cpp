@@ -68,6 +68,28 @@ int main (int argc, char** argv) {
       if (reportCounts)
 	cerr << "Final count represents overflow (chop zones that were larger than size limit)" << endl;
       cerr << "Total: " << total << endl;
+      if (!vm.count("counts")) {
+	double ei = 0, ed = 0, ei2 = 0, ed2 = 0, eid = 0, pi0 = 0, pd0 = 0;
+	for (int i = 0; i < probs.size(); ++i)
+	  for (int d = 0; d < probs[i].size(); ++d) {
+	    const double p = probs[i][d];
+	    ei += i * p;
+	    ed += d * p;
+	    ei2 += i * i * p;
+	    ed2 += d * d * p;
+	    eid += i * d * p;
+	    if (i == 0)
+	      pi0 += p;
+	    if (d == 0)
+	      pd0 += p;
+	  }
+	cerr << "E[#ins]=" << ei << " E[#del]=" << ed
+	     << " E[#ins^2]=" << ei2 << " E[#del^2]=" << ed2
+	     << " V[#ins]=" << (ei2 - ei*ei) << " V[#del]=" << (ed2 - ed*ed)
+	     << " E[#ins*#del]=" << eid
+	     << " Cov(#ins,#del)=" << (eid-ei*ed)
+	     << endl;
+      }
     }
 
     return EXIT_SUCCESS;
