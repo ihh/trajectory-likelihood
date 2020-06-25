@@ -38,7 +38,12 @@ namespace TrajectoryLikelihood {
       const double t = dt * (double) i;
       mc_solver.step (eval_dmc_dt, t, dt, MC[i-1], MC[i]);
       if (verbose > 2)
-	cerr << "t=" << t << " M=" << MC[i][0] << " L=" << L(t) << " C=" << MC[i][1] << endl;
+	cerr << "t=" << t
+	     << " M=" << MC[i][0] << " L=" << L(t) << " C=" << MC[i][1]
+	     << " p=" << p(MC[i][0],MC[i][1],t)
+	     << " q=" << q(MC[i][0],MC[i][1],t)
+	     << " r=" << r(MC[i][0],MC[i][1],t)
+	     << endl;
     }
   }
 
