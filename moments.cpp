@@ -38,7 +38,7 @@ namespace TrajectoryLikelihood {
     T[0][0] = 1.;
     RungeKutta4 T_solver (4);
     for (int i = 1; i < T.size(); ++i) {
-      const double t = dt * (double) i;
+      const double t = dt * (double) (i - 1);
       T_solver.step (eval_dmc_dt, t, dt, T[i-1], T[i]);
       if (verbose > 2)
 	cerr << "t=" << t

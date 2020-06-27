@@ -32,12 +32,12 @@ namespace TrajectoryLikelihood {
     inline double a (const vector<double>& T, double t) const { return TMM(T,t); }
     inline double b (const vector<double>& T, double t) const { return TMI(T,t); }
     inline double c (const vector<double>& T, double t) const { return TMD(T,t); }
-    inline double f (const vector<double>& T, double t) const { return TIM(T,t) / SI(t); }
-    inline double g (const vector<double>& T, double t) const { return TII(T,t) / SI(t); }
-    inline double h (const vector<double>& T, double t) const { return TID(T,t) / SI(t); }
-    inline double p (const vector<double>& T, double t) const { return TDM(T,t) / SD(t); }
-    inline double q (const vector<double>& T, double t) const { return TDI(T,t) / SD(t); }
-    inline double r (const vector<double>& T, double t) const { return TDD(T,t) / SD(t); }
+    inline double f (const vector<double>& T, double t) const { return t > 0 ? (TIM(T,t) / SI(t)) : 1.; }
+    inline double g (const vector<double>& T, double t) const { return t > 0 ? (TII(T,t) / SI(t)) : 0.; }
+    inline double h (const vector<double>& T, double t) const { return t > 0 ? (TID(T,t) / SI(t)) : 0.; }
+    inline double p (const vector<double>& T, double t) const { return t > 0 ? (TDM(T,t) / SD(t)) : 1.; }
+    inline double q (const vector<double>& T, double t) const { return t > 0 ? (TDI(T,t) / SD(t)) : 0.; }
+    inline double r (const vector<double>& T, double t) const { return t > 0 ? (TDD(T,t) / SD(t)) : 0.; }
     
     vector<vector<double> > chopZoneLikelihoods (int maxLen) const;
   };
