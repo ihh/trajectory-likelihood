@@ -6,6 +6,7 @@ const fs = require('fs'),
 
 // parse command-line options
 const opt = getopt.create([
+  ['n' , 'normalize'        , 'normalize distributions'],
   ['h' , 'help'             , 'display this help message']
 ])              // create Getopt instance
       .bindHelp()     // bind option 'help' to default action
@@ -16,7 +17,12 @@ if (files.length < 2)
   throw new Error ("Please specify at least two distribution files")
 
 const distrib = files.map ((filename) => {
-  return fs.readFileSync(filename).toString().split("\n").map ((line) => line.split(" ").map ((x) => parseFloat(x)))
+  let d = fs.readFileSync(filename).toString().split("\n").map ((line) => line.split(" ").map ((x) => parseFloat(x)).filter ((p) => !isNaN(p))).filter ((line) => line.length)
+  if (opt.options.normalize) {
+    const norm = d.reduce ((sum, row) => row.reduce ((sum, p) => sum + p, sum), 0)
+    d = d.map ((row) => row.map ((p) => p / norm))
+  }
+  return d
 })
 
 const entropy = (dist) => {
