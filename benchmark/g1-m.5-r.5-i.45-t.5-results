@@ -1,0 +1,40 @@
+P0 g1-m.5-r.5-i.45-t.5-sim.log.short 0.9999999999993724
+Ei g1-m.5-r.5-i.45-t.5-sim.log.short 6.276176129247016e-13
+Ed g1-m.5-r.5-i.45-t.5-sim.log.short 0
+Vi g1-m.5-r.5-i.45-t.5-sim.log.short 6.276176129243077e-13
+Vd g1-m.5-r.5-i.45-t.5-sim.log.short 0
+Cid g1-m.5-r.5-i.45-t.5-sim.log.short 0
+P0 g1-m.5-r.5-i.45-t.5-moments 0.7895789206776268
+Ei g1-m.5-r.5-i.45-t.5-moments 0.22950490336079435
+Ed g1-m.5-r.5-i.45-t.5-moments 0.2840255853879134
+Vi g1-m.5-r.5-i.45-t.5-moments 0.6665051227828653
+Vd g1-m.5-r.5-i.45-t.5-moments 0.9644192460281107
+Cid g1-m.5-r.5-i.45-t.5-moments 0.051538658411840466
+P0 g1-m.5-r.5-i.45-t.5-traj.log.short 1
+Ei g1-m.5-r.5-i.45-t.5-traj.log.short 0
+Ed g1-m.5-r.5-i.45-t.5-traj.log.short 0
+Vi g1-m.5-r.5-i.45-t.5-traj.log.short 0
+Vd g1-m.5-r.5-i.45-t.5-traj.log.short 0
+Cid g1-m.5-r.5-i.45-t.5-traj.log.short 0
+P0 g1-m.5-r.5-i.45-t.5-cim 0.7817759041003401
+Ei g1-m.5-r.5-i.45-t.5-cim 0.2551721919862032
+Ed g1-m.5-r.5-i.45-t.5-cim 0.28402543225513216
+Vi g1-m.5-r.5-i.45-t.5-cim 0.7566487201571257
+Vd g1-m.5-r.5-i.45-t.5-cim 0.966664147574467
+Cid g1-m.5-r.5-i.45-t.5-cim 0.04564730855714444
+S g1-m.5-r.5-i.45-t.5-sim.log.short 2.6346041032102625e-11
+S g1-m.5-r.5-i.45-t.5-moments 1.5408997900875354
+S g1-m.5-r.5-i.45-t.5-traj.log.short 0
+S g1-m.5-r.5-i.45-t.5-cim 1.5942522770680707
+D g1-m.5-r.5-i.45-t.5-sim.log.short g1-m.5-r.5-i.45-t.5-moments 0.34084462006399824
+D g1-m.5-r.5-i.45-t.5-sim.log.short g1-m.5-r.5-i.45-t.5-traj.log.short 0
+D g1-m.5-r.5-i.45-t.5-sim.log.short g1-m.5-r.5-i.45-t.5-cim 0.3551729763027283
+D g1-m.5-r.5-i.45-t.5-moments g1-m.5-r.5-i.45-t.5-sim.log.short 1.8215199373178081
+D g1-m.5-r.5-i.45-t.5-moments g1-m.5-r.5-i.45-t.5-traj.log.short 0
+D g1-m.5-r.5-i.45-t.5-moments g1-m.5-r.5-i.45-t.5-cim 0.0008866414275443148
+D g1-m.5-r.5-i.45-t.5-traj.log.short g1-m.5-r.5-i.45-t.5-sim.log.short 9.05608672628193e-13
+D g1-m.5-r.5-i.45-t.5-traj.log.short g1-m.5-r.5-i.45-t.5-moments 0.3408446200877197
+D g1-m.5-r.5-i.45-t.5-traj.log.short g1-m.5-r.5-i.45-t.5-cim 0.3551729763265091
+D g1-m.5-r.5-i.45-t.5-cim g1-m.5-r.5-i.45-t.5-sim.log.short 1.9423559420847445
+D g1-m.5-r.5-i.45-t.5-cim g1-m.5-r.5-i.45-t.5-moments 0.0009202827172356253
+D g1-m.5-r.5-i.45-t.5-cim g1-m.5-r.5-i.45-t.5-traj.log.short 0

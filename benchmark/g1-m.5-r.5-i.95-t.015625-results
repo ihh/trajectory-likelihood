@@ -1,0 +1,40 @@
+P0 g1-m.5-r.5-i.95-t.015625-sim.log.short 0.9999999999993737
+Ei g1-m.5-r.5-i.95-t.015625-sim.log.short 6.262487434185805e-13
+Ed g1-m.5-r.5-i.95-t.015625-sim.log.short 0
+Vi g1-m.5-r.5-i.95-t.015625-sim.log.short 6.262487434181884e-13
+Vd g1-m.5-r.5-i.95-t.015625-sim.log.short 0
+Cid g1-m.5-r.5-i.95-t.015625-sim.log.short 0
+P0 g1-m.5-r.5-i.95-t.015625-moments 0.9757982542294567
+Ei g1-m.5-r.5-i.95-t.015625-moments 0.7436254601272242
+Ed g1-m.5-r.5-i.95-t.015625-moments 0.007809275197969224
+Vi g1-m.5-r.5-i.95-t.015625-moments 39.53878317257086
+Vd g1-m.5-r.5-i.95-t.015625-moments 0.04061350456021493
+Cid g1-m.5-r.5-i.95-t.015625-moments 0.00799984269926494
+P0 g1-m.5-r.5-i.95-t.015625-traj.log.short 1
+Ei g1-m.5-r.5-i.95-t.015625-traj.log.short 0
+Ed g1-m.5-r.5-i.95-t.015625-traj.log.short 0
+Vi g1-m.5-r.5-i.95-t.015625-traj.log.short 0
+Vd g1-m.5-r.5-i.95-t.015625-traj.log.short 0
+Cid g1-m.5-r.5-i.95-t.015625-traj.log.short 0
+P0 g1-m.5-r.5-i.95-t.015625-cim 0.9951329918450301
+Ei g1-m.5-r.5-i.95-t.015625-cim 0.06667346528366119
+Ed g1-m.5-r.5-i.95-t.015625-cim 0.007841839993984667
+Vi g1-m.5-r.5-i.95-t.015625-cim 3.1554799596520877
+Vd g1-m.5-r.5-i.95-t.015625-cim 0.04140919493519021
+Cid g1-m.5-r.5-i.95-t.015625-cim 0.0007625978200658149
+S g1-m.5-r.5-i.95-t.015625-sim.log.short 2.6290604311241227e-11
+S g1-m.5-r.5-i.95-t.015625-moments 0.323565113994616
+S g1-m.5-r.5-i.95-t.015625-traj.log.short 0
+S g1-m.5-r.5-i.95-t.015625-cim 0.07120124569264699
+D g1-m.5-r.5-i.95-t.015625-sim.log.short g1-m.5-r.5-i.95-t.015625-moments 0.03534519268281605
+D g1-m.5-r.5-i.95-t.015625-sim.log.short g1-m.5-r.5-i.95-t.015625-traj.log.short 0
+D g1-m.5-r.5-i.95-t.015625-sim.log.short g1-m.5-r.5-i.95-t.015625-cim 0.007038751269646019
+D g1-m.5-r.5-i.95-t.015625-moments g1-m.5-r.5-i.95-t.015625-sim.log.short 0.014896859183333274
+D g1-m.5-r.5-i.95-t.015625-moments g1-m.5-r.5-i.95-t.015625-traj.log.short 0
+D g1-m.5-r.5-i.95-t.015625-moments g1-m.5-r.5-i.95-t.015625-cim 0.04289157741550888
+D g1-m.5-r.5-i.95-t.015625-traj.log.short g1-m.5-r.5-i.95-t.015625-sim.log.short 9.036866167259052e-13
+D g1-m.5-r.5-i.95-t.015625-traj.log.short g1-m.5-r.5-i.95-t.015625-moments 0.03534519270228906
+D g1-m.5-r.5-i.95-t.015625-traj.log.short g1-m.5-r.5-i.95-t.015625-cim 0.007038751287375066
+D g1-m.5-r.5-i.95-t.015625-cim g1-m.5-r.5-i.95-t.015625-sim.log.short 0.0019490814463155688
+D g1-m.5-r.5-i.95-t.015625-cim g1-m.5-r.5-i.95-t.015625-moments 0.020789035539161737
+D g1-m.5-r.5-i.95-t.015625-cim g1-m.5-r.5-i.95-t.015625-traj.log.short 0

@@ -1,0 +1,40 @@
+P0 g1-m.05-r.9-i.9-t4-sim.log.short 0.9999999999993724
+Ei g1-m.05-r.9-i.9-t4-sim.log.short 6.276098452473818e-13
+Ed g1-m.05-r.9-i.9-t4-sim.log.short 0
+Vi g1-m.05-r.9-i.9-t4-sim.log.short 6.276098452469879e-13
+Vd g1-m.05-r.9-i.9-t4-sim.log.short 0
+Cid g1-m.05-r.9-i.9-t4-sim.log.short 0
+P0 g1-m.05-r.9-i.9-t4-moments 0.9608012118692295
+Ei g1-m.05-r.9-i.9-t4-moments 0.22127816962013325
+Ed g1-m.05-r.9-i.9-t4-moments 0.22127792102096566
+Vi g1-m.05-r.9-i.9-t4-moments 4.445220945469451
+Vd g1-m.05-r.9-i.9-t4-moments 4.445939649570743
+Cid g1-m.05-r.9-i.9-t4-moments 0.22262361210174267
+P0 g1-m.05-r.9-i.9-t4-traj.log.short 1
+Ei g1-m.05-r.9-i.9-t4-traj.log.short 0
+Ed g1-m.05-r.9-i.9-t4-traj.log.short 0
+Vi g1-m.05-r.9-i.9-t4-traj.log.short 0
+Vd g1-m.05-r.9-i.9-t4-traj.log.short 0
+Cid g1-m.05-r.9-i.9-t4-traj.log.short 0
+P0 g1-m.05-r.9-i.9-t4-cim 0.960816079020289
+Ei g1-m.05-r.9-i.9-t4-cim 0.22127468628477318
+Ed g1-m.05-r.9-i.9-t4-cim 0.22127712201628386
+Vi g1-m.05-r.9-i.9-t4-cim 4.460538865823079
+Vd g1-m.05-r.9-i.9-t4-cim 4.450646122216821
+Cid g1-m.05-r.9-i.9-t4-cim 0.20054629012782085
+S g1-m.05-r.9-i.9-t4-sim.log.short 2.634573737422919e-11
+S g1-m.05-r.9-i.9-t4-moments 0.4865206745690364
+S g1-m.05-r.9-i.9-t4-traj.log.short 0
+S g1-m.05-r.9-i.9-t4-cim 0.48591370919804794
+D g1-m.05-r.9-i.9-t4-sim.log.short g1-m.05-r.9-i.9-t4-moments 0.05769012413477807
+D g1-m.05-r.9-i.9-t4-sim.log.short g1-m.05-r.9-i.9-t4-traj.log.short 0
+D g1-m.05-r.9-i.9-t4-sim.log.short g1-m.05-r.9-i.9-t4-cim 0.05766780047522098
+D g1-m.05-r.9-i.9-t4-moments g1-m.05-r.9-i.9-t4-sim.log.short 0.05405110152642251
+D g1-m.05-r.9-i.9-t4-moments g1-m.05-r.9-i.9-t4-traj.log.short 0
+D g1-m.05-r.9-i.9-t4-moments g1-m.05-r.9-i.9-t4-cim 0.00000502501306852071
+D g1-m.05-r.9-i.9-t4-traj.log.short g1-m.05-r.9-i.9-t4-sim.log.short 9.05608672628193e-13
+D g1-m.05-r.9-i.9-t4-traj.log.short g1-m.05-r.9-i.9-t4-moments 0.057690124155404594
+D g1-m.05-r.9-i.9-t4-traj.log.short g1-m.05-r.9-i.9-t4-cim 0.057667800495841505
+D g1-m.05-r.9-i.9-t4-cim g1-m.05-r.9-i.9-t4-sim.log.short 0.05369670624045242
+D g1-m.05-r.9-i.9-t4-cim g1-m.05-r.9-i.9-t4-moments 0.0000048995442754221824
+D g1-m.05-r.9-i.9-t4-cim g1-m.05-r.9-i.9-t4-traj.log.short 0

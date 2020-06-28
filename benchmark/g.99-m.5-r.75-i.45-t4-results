@@ -1,0 +1,27 @@
+P0 g.99-m.5-r.75-i.45-t4-sim.log.short 0.9999999999993755
+Ei g.99-m.5-r.75-i.45-t4-sim.log.short 6.244759146708328e-13
+Ed g.99-m.5-r.75-i.45-t4-sim.log.short 0
+Vi g.99-m.5-r.75-i.45-t4-sim.log.short 6.244759146704428e-13
+Vd g.99-m.5-r.75-i.45-t4-sim.log.short 0
+Cid g.99-m.5-r.75-i.45-t4-sim.log.short 0
+P0 g.99-m.5-r.75-i.45-t4-moments 0.4901204929025999
+Ei g.99-m.5-r.75-i.45-t4-moments 0.4948226242790565
+Ed g.99-m.5-r.75-i.45-t4-moments 6.3414952214221945
+Vi g.99-m.5-r.75-i.45-t4-moments 1.4206446854725665
+Vd g.99-m.5-r.75-i.45-t4-moments 139.83900480869036
+Cid g.99-m.5-r.75-i.45-t4-moments 2.846276048890885
+P0 g.99-m.5-r.75-i.45-t4-traj.log.short 1
+Ei g.99-m.5-r.75-i.45-t4-traj.log.short 0
+Ed g.99-m.5-r.75-i.45-t4-traj.log.short 0
+Vi g.99-m.5-r.75-i.45-t4-traj.log.short 0
+Vd g.99-m.5-r.75-i.45-t4-traj.log.short 0
+Cid g.99-m.5-r.75-i.45-t4-traj.log.short 0
+S g.99-m.5-r.75-i.45-t4-sim.log.short 2.6218728081871726e-11
+S g.99-m.5-r.75-i.45-t4-moments 4.453754353896858
+S g.99-m.5-r.75-i.45-t4-traj.log.short 0
+D g.99-m.5-r.75-i.45-t4-sim.log.short g.99-m.5-r.75-i.45-t4-moments 1.0287916249349724
+D g.99-m.5-r.75-i.45-t4-sim.log.short g.99-m.5-r.75-i.45-t4-traj.log.short 0
+D g.99-m.5-r.75-i.45-t4-moments g.99-m.5-r.75-i.45-t4-sim.log.short 2.853156901485947
+D g.99-m.5-r.75-i.45-t4-moments g.99-m.5-r.75-i.45-t4-traj.log.short 0
+D g.99-m.5-r.75-i.45-t4-traj.log.short g.99-m.5-r.75-i.45-t4-sim.log.short 9.011238755228549e-13
+D g.99-m.5-r.75-i.45-t4-traj.log.short g.99-m.5-r.75-i.45-t4-moments 1.0287916249589948
