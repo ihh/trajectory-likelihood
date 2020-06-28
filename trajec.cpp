@@ -293,11 +293,11 @@ int countTotalDeletions (const vector<int>& zoneLengths) {
 
 vector<vector<double> > chopZoneLikelihoods (const IndelParams& params, double time, const ChopZoneConfig& config) {
   vector<vector<double> > probs;
-  for (int nDeleted = 0; nDeleted <= config.maxLen; ++nDeleted) {
-    vector<double> pd;
-    for (int nInserted = 0; nInserted <= config.maxLen; ++nInserted)
-      pd.push_back (chopZoneLikelihood (nDeleted, nInserted, params, time, config));
-    probs.push_back (pd);
+  for (int nInserted = 0; nInserted <= config.maxLen; ++nInserted) {
+    vector<double> pi;
+    for (int nDeleted = 0; nDeleted <= config.maxLen; ++nDeleted)
+      pi.push_back (chopZoneLikelihood (nDeleted, nInserted, params, time, config));
+    probs.push_back (pi);
   }
   return probs;
 }

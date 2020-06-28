@@ -82,7 +82,7 @@ int main (int argc, char** argv) {
       cout << to_string_join (pd) << endl;
     }
     if (verbose) {
-      cerr << "Entry in row i, column j is " << (reportCounts ? "count" : "probability") << " of deleting i residues and inserting j residues before the next match" << endl;
+      cerr << "Entry in row i, column j is " << (reportCounts ? "count" : "probability") << " of inserting i residues and deleting j residues before the next match" << endl;
       if (reportCounts)
 	cerr << "Final count represents overflow (chop zones that were larger than size limit)" << endl;
       cerr << "Total: " << total << endl;
