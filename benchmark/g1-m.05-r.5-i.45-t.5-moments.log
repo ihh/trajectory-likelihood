@@ -3,5 +3,5 @@ Total: 1
 E[#ins]=0.0208761 E[#del]=0.0253151 E[#ins^2]=0.0559862 E[#del^2]=0.0774908 V[#ins]=0.0555504 V[#del]=0.07685 E[#ins*#del]=0.000946069 Cov(#ins,#del)=0.000417588
 
 real	0m0.019s
-user	0m0.009s
-sys	0m0.005s
+user	0m0.010s
+sys	0m0.004s

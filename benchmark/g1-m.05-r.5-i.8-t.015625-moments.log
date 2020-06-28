@@ -1,6 +1,6 @@
 Entry in row i, column j is probability of inserting i residues and deleting j residues before the next match
 Total: 1
-E[#ins]=0.00489475 E[#del]=0.000781555 E[#ins^2]=0.0462281 E[#del^2]=0.00247554 V[#ins]=0.0462042 V[#del]=0.00247493 E[#ins*#del]=8.28796e-06 Cov(#ins,#del)=4.46244e-06
+E[#ins]=0.00489475 E[#del]=0.000781555 E[#ins^2]=0.0442623 E[#del^2]=0.00235024 V[#ins]=0.0442383 V[#del]=0.00234963 E[#ins*#del]=8.28793e-06 Cov(#ins,#del)=4.46241e-06
 
 real	0m0.016s
 user	0m0.008s

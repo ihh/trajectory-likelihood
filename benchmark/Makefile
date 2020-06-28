@@ -44,10 +44,10 @@ g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-traj:
 	rm $@.log
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-cim:
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --cim --maxlen 100 --dt .001 >$@) >&$@.log
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --cim --maxlen 100 --dt .0001 >$@) >&$@.log
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-moments:
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --moments --maxlen 100 --dt .001 >$@) >&$@.log
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --moments --maxlen 100 --dt .0001 >$@) >&$@.log
 
 shorten-logs: $(addsuffix .short,$(wildcard *-traj.log) $(wildcard *-sim.log))
 
