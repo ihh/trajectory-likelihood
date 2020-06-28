@@ -32,9 +32,13 @@ g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1
 g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj
 	$(RELENT) --normalize $^ >$@
 
-#g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 0.5 }
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim:
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 8 }
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 100000 --initlen 1000 --maxlen 100 >$@) >&$@.log
+	grep -v "Beginning simulation trial" $@.log >$@.log.short
+	rm $@.log
+
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 8 }
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 10000 --initlen 10000 --maxlen 100 >$@) >&$@.log
 	grep -v "Beginning simulation trial" $@.log >$@.log.short
 	rm $@.log
 
