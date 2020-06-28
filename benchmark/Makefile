@@ -5,10 +5,10 @@ RELENT = ../relent.js
 all: relents stats
 
 relents: scan-gammas
-	cat *results | perl -e 'print"gamma mu rdel rins t method D\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){$$m[3]*=$$m[0];print"@m\n"}}' >$@
+	cat *results | perl -e 'print"gamma mu rdel rins t method D reversible\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){push@m,($$m[3]==$$m[2]?"yes":"no");$$m[3]*=$$m[0];print"@m\n"}}' >$@
 
 stats: scan-gammas
-	cat *results | perl -e 'print"stat gamma mu rdel rins t method value\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){$$m[4]*=$$m[1];print"@m\n"}}' >$@
+	cat *results | perl -e 'print"stat gamma mu rdel rins t method value reversible\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){push@m,($$m[4]==$$m[3]?"yes":"no");$$m[4]*=$$m[1];print"@m\n"}}' >$@
 
 scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu
 
