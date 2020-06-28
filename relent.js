@@ -77,11 +77,13 @@ const moments = (dist) => {
   return { ei, ed, ei2, ed2, eid,
            vi: ei2 - ei*ei,
            vd: ed2 - ed*ed,
-           cid: eid - ei*ed }
+           cid: eid - ei*ed,
+           p0: dist[0][0] }
 }
 
 files.forEach ((file, i) => {
   const m = moments (distrib[i])
+  console.log ("P0 " + file + " " + m.p0)
   console.log ("Ei " + file + " " + m.ei)
   console.log ("Ed " + file + " " + m.ed)
   console.log ("Vi " + file + " " + m.vi)
