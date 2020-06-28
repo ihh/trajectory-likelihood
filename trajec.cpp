@@ -188,7 +188,7 @@ double IndelParams::rightwardDeletionRate (int k) const {
 }
 
 double IndelParams::totalInsertionRatePerSite() const {
-  return gamma * mu * (1 - rDel) * (1 - rDel) / (1 - gamma * rIns);
+  return gamma * mu * (1 - rDel) * (1 - rDel) / (1 - rIns);
 }
 
 double IndelParams::totalRightwardDeletionRatePerSite() const {
