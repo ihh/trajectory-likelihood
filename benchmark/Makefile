@@ -14,14 +14,14 @@ $(PREFIX)-results: $(PREFIX)-sim $(PREFIX)-traj $(PREFIX)-cim $(PREFIX)-moments
 	$(RELENT) --normalize $^ >$@
 
 g$(G)-m$(M)-r$(R)-t$(T)-sim:
-	time (($(TL) --gamma $(G) --mu $(M) --r $(R) --time $(T) --seedtime --simulate --maxlen 100 >$@) >&$@.log) >$@.time
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --time $(T) --seedtime --simulate --maxlen 100 >$@) >&$@.log
 
 g$(G)-m$(M)-r$(R)-t$(T)-traj:
-	time (($(TL) --gamma $(G) --mu $(M) --r $(R) --time $(T) --maxlen 30 >$@) >&$@.log) >$@.time
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --time $(T) --maxlen 30 >$@) >&$@.log
 
 g$(G)-m$(M)-r$(R)-t$(T)-cim:
-	time (($(TL) --gamma $(G) --mu $(M) --r $(R) --time $(T) --cim --maxlen 100 >$@) >&$@.log) >$@.time
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --time $(T) --cim --maxlen 100 >$@) >&$@.log
 
 g$(G)-m$(M)-r$(R)-t$(T)-moments:
-	time (($(TL) --gamma $(G) --mu $(M) --r $(R) --time $(T) --moments --maxlen 100 >$@) >&$@.log) >$@.time
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --time $(T) --moments --maxlen 100 >$@) >&$@.log
 
