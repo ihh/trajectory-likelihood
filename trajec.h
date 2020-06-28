@@ -18,7 +18,7 @@ namespace TrajectoryLikelihood {
   struct IndelParams {
     double gamma, mu, rDel, rIns;
     IndelParams() : gamma(1), mu(0), rDel(0), rIns(0) { }
-    IndelParams (double g, double m, double r) : gamma(g), mu(m), rDel(r), rIns(g*r) { }
+    IndelParams (double g, double m, double r) : gamma(g), mu(m), rDel(r), rIns(r) { }
     IndelParams (double g, double m, double rd, double ri) : gamma(g), mu(m), rDel(rd), rIns(ri) { }
     double insertionRate (int insertedLength) const;
     double rightwardDeletionRate (int deletedLength) const;

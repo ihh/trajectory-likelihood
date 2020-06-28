@@ -9,7 +9,7 @@ namespace TrajectoryLikelihood {
     params (params),
     ri (params.totalRightwardDeletionRatePerSite()),
     rd (params.totalRightwardDeletionRatePerSite()),
-    gi (params.rIns),
+    gi (params.gamma * params.rIns),
     gd (params.rDel),
     A (tMax / dt + 1, vector<double> (3, 0.)),
     dt (dt),
