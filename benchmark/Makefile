@@ -8,7 +8,7 @@ relents: scan-gammas
 	cat *results | perl -e 'print"gamma mu rdel rins t method D\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){$$m[3]*=$$m[0];print"@m\n"}}' >$@
 
 stats: scan-gammas
-	cat *results | perl -e 'print"stat gamma mu rdel rins t method value\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){$$m[4]*=$$[m1];print"@m\n"}}' >$@
+	cat *results | perl -e 'print"stat gamma mu rdel rins t method value\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){$$m[4]*=$$m[1];print"@m\n"}}' >$@
 
 scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu
 
@@ -24,17 +24,11 @@ $(PREFIX)-scan-time-short: $(PREFIX)-scan-time-tiny $(PREFIX)-t.125-results $(PR
 
 $(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.03125-results $(PREFIX)-t.0625-results
 
-g1-$(PREFIX)-results: g1-$(PREFIX)-sim.log.short g1-$(PREFIX)-moments g1-$(PREFIX)-traj.log.short g1-$(PREFIX)-cim
+g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1-$(PREFIX)-cim
 	$(RELENT) --normalize $^ >$@
 
-g.9$(PREFIX)-results: g.9$(PREFIX)-sim.log.short g.9$(PREFIX)-moments g.9$(PREFIX)-traj.log.short
+g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj
 	$(RELENT) --normalize $^ >$@
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim.log.short: g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim
-	grep -v "Beginning simulation trial" $<.log >$@
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-traj.log.short: g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-traj
-	grep -v "Likelihood for" $<.log >$@
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim:
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 100000 --initlen 1000 --maxlen 100 >$@) >&$@.log
@@ -47,5 +41,13 @@ g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-cim:
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-moments:
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --moments --maxlen 100 >$@) >&$@.log
+
+shorten-logs: $(addsuffix .short,$(wildcard *-sim.log) $(wildcard *-traj.log))
+
+%-sim.log.short: %-sim.log
+	grep -v "Beginning simulation trial" $< >$@
+
+%-traj.log.short: %-traj.log
+	grep -v "Likelihood for" $< >$@
 
 .SECONDARY:

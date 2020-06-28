@@ -1,40 +1,40 @@
-P0 g1-m.5-r.9-i.8-t.25-sim.log.short 0.9999999999993724
-Ei g1-m.5-r.9-i.8-t.25-sim.log.short 6.276056110944043e-13
-Ed g1-m.5-r.9-i.8-t.25-sim.log.short 0
-Vi g1-m.5-r.9-i.8-t.25-sim.log.short 6.276056110940104e-13
-Vd g1-m.5-r.9-i.8-t.25-sim.log.short 0
-Cid g1-m.5-r.9-i.8-t.25-sim.log.short 0
+P0 g1-m.5-r.9-i.8-t.25-sim 0.9815462609820845
+Ei g1-m.5-r.9-i.8-t.25-sim 0.03158613354134584
+Ed g1-m.5-r.9-i.8-t.25-sim 0.1301091414626186
+Vi g1-m.5-r.9-i.8-t.25-sim 0.2860841152931883
+Vd g1-m.5-r.9-i.8-t.25-sim 2.705985674403926
+Cid g1-m.5-r.9-i.8-t.25-sim 0.012833297206910704
 P0 g1-m.5-r.9-i.8-t.25-moments 0.9814280007253563
 Ei g1-m.5-r.9-i.8-t.25-moments 0.03174335560229464
 Ed g1-m.5-r.9-i.8-t.25-moments 0.13307866727847964
 Vi g1-m.5-r.9-i.8-t.25-moments 0.2850504563486807
 Vd g1-m.5-r.9-i.8-t.25-moments 2.6677256046951743
 Cid g1-m.5-r.9-i.8-t.25-moments 0.012747493760095185
-P0 g1-m.5-r.9-i.8-t.25-traj.log.short 1
-Ei g1-m.5-r.9-i.8-t.25-traj.log.short 0
-Ed g1-m.5-r.9-i.8-t.25-traj.log.short 0
-Vi g1-m.5-r.9-i.8-t.25-traj.log.short 0
-Vd g1-m.5-r.9-i.8-t.25-traj.log.short 0
-Cid g1-m.5-r.9-i.8-t.25-traj.log.short 0
+P0 g1-m.5-r.9-i.8-t.25-traj 0.9821738178939096
+Ei g1-m.5-r.9-i.8-t.25-traj 0.03104465087141506
+Ed g1-m.5-r.9-i.8-t.25-traj 0.10251122528237432
+Vi g1-m.5-r.9-i.8-t.25-traj 0.2715866195795868
+Vd g1-m.5-r.9-i.8-t.25-traj 1.4592795862060008
+Cid g1-m.5-r.9-i.8-t.25-traj 0.005578845469205346
 P0 g1-m.5-r.9-i.8-t.25-cim 0.9754365449839703
 Ei g1-m.5-r.9-i.8-t.25-cim 0.06449433394101542
 Ed g1-m.5-r.9-i.8-t.25-cim 0.13308224083150116
 Vi g1-m.5-r.9-i.8-t.25-cim 0.5925281627347401
 Vd g1-m.5-r.9-i.8-t.25-cim 2.6521562460981425
 Cid g1-m.5-r.9-i.8-t.25-cim 0.02572000500813782
-S g1-m.5-r.9-i.8-t.25-sim.log.short 2.634557185057396e-11
+S g1-m.5-r.9-i.8-t.25-sim 0.2335269223304655
 S g1-m.5-r.9-i.8-t.25-moments 0.23520738100558217
-S g1-m.5-r.9-i.8-t.25-traj.log.short 0
+S g1-m.5-r.9-i.8-t.25-traj 0.22213916951783294
 S g1-m.5-r.9-i.8-t.25-cim 0.30063608507626377
-D g1-m.5-r.9-i.8-t.25-sim.log.short g1-m.5-r.9-i.8-t.25-moments 0.02704566192503859
-D g1-m.5-r.9-i.8-t.25-sim.log.short g1-m.5-r.9-i.8-t.25-traj.log.short 0
-D g1-m.5-r.9-i.8-t.25-sim.log.short g1-m.5-r.9-i.8-t.25-cim 0.03588007053505841
-D g1-m.5-r.9-i.8-t.25-moments g1-m.5-r.9-i.8-t.25-sim.log.short 0.03606436904154905
-D g1-m.5-r.9-i.8-t.25-moments g1-m.5-r.9-i.8-t.25-traj.log.short 0
+D g1-m.5-r.9-i.8-t.25-sim g1-m.5-r.9-i.8-t.25-moments 0.000047879564392791515
+D g1-m.5-r.9-i.8-t.25-sim g1-m.5-r.9-i.8-t.25-traj 0.00003284848194027902
+D g1-m.5-r.9-i.8-t.25-sim g1-m.5-r.9-i.8-t.25-cim 0.002818400197560528
+D g1-m.5-r.9-i.8-t.25-moments g1-m.5-r.9-i.8-t.25-sim Infinity
+D g1-m.5-r.9-i.8-t.25-moments g1-m.5-r.9-i.8-t.25-traj 0.000045220301675582956
 D g1-m.5-r.9-i.8-t.25-moments g1-m.5-r.9-i.8-t.25-cim 0.002768856662036612
-D g1-m.5-r.9-i.8-t.25-traj.log.short g1-m.5-r.9-i.8-t.25-sim.log.short 9.05608672628193e-13
-D g1-m.5-r.9-i.8-t.25-traj.log.short g1-m.5-r.9-i.8-t.25-moments 0.027045661945315026
-D g1-m.5-r.9-i.8-t.25-traj.log.short g1-m.5-r.9-i.8-t.25-cim 0.03588007055593823
-D g1-m.5-r.9-i.8-t.25-cim g1-m.5-r.9-i.8-t.25-sim.log.short 0.0724255319319276
+D g1-m.5-r.9-i.8-t.25-traj g1-m.5-r.9-i.8-t.25-sim Infinity
+D g1-m.5-r.9-i.8-t.25-traj g1-m.5-r.9-i.8-t.25-moments 0.0009737063489452348
+D g1-m.5-r.9-i.8-t.25-traj g1-m.5-r.9-i.8-t.25-cim 0.0037665776932356465
+D g1-m.5-r.9-i.8-t.25-cim g1-m.5-r.9-i.8-t.25-sim Infinity
 D g1-m.5-r.9-i.8-t.25-cim g1-m.5-r.9-i.8-t.25-moments 0.003471225961440183
-D g1-m.5-r.9-i.8-t.25-cim g1-m.5-r.9-i.8-t.25-traj.log.short 0
+D g1-m.5-r.9-i.8-t.25-cim g1-m.5-r.9-i.8-t.25-traj 0.003579391689637224
