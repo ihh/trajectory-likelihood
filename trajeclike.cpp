@@ -17,7 +17,8 @@ int main (int argc, char** argv) {
     ("verbose,v", po::value<int>()->default_value(0), "logging verbosity")
     ("gamma", po::value<double>()->default_value(.99), "gamma parameter from MLH 2004 (parameter of equilibrium geometric distribution over sequence lengths)")
     ("mu", po::value<double>()->default_value(.049), "mu parameter from MLH 2004 (rightward deletion rate)")
-    ("r,r", po::value<double>()->default_value(.543), "r parameter from MLH 2004 (parameter of geometric distribution over deletion lengths")
+    ("r,r", po::value<double>()->default_value(.543), "r parameter from MLH 2004 (parameter of geometric distribution over deletion lengths)")
+    ("rins,I", po::value<double>(), "parameter of geometric distribution over insertion lengths (default is gamma*r)")
     ("time,t", po::value<double>()->default_value(1), "time parameter")
     ("maxevents,E", po::value<int>()->default_value(3), "max # of indel events in trajectory")
     ("maxlen,L", po::value<int>()->default_value(10), "max length of chop zone")
@@ -41,7 +42,10 @@ int main (int argc, char** argv) {
       return EXIT_SUCCESS;
     }
 
-    const IndelParams params (vm.at("gamma").as<double>(), vm.at("mu").as<double>(), vm.at("r").as<double>());
+    const double gamma = vm.at("gamma").as<double>();
+    const double mu = vm.at("mu").as<double>();
+    const double r = vm.at("r").as<double>();
+    const IndelParams params (gamma, mu, r, vm.count("rins") ? vm.at("rins").as<double>() : (gamma*r));
     const double t = vm.at("time").as<double>();
 
     const int verbose = vm.at("verbose").as<int>();

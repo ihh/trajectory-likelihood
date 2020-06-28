@@ -180,19 +180,19 @@ double exitRateForZoneLength (int zoneLength, const IndelParams& params) {
 }
 
 double IndelParams::insertionRate (int k) const {
-  return gamma * mu * (1 - r) * (1 - r) * pow (gamma * r, k-1);
+  return gamma * mu * (1 - rDel) * (1 - rDel) * pow (rIns, k-1);
 }
 
 double IndelParams::rightwardDeletionRate (int k) const {
-  return mu * (1 - r) * (1 - r) * pow (r, k-1);
+  return mu * (1 - rDel) * (1 - rDel) * pow (rDel, k-1);
 }
 
 double IndelParams::totalInsertionRatePerSite() const {
-  return gamma * mu * (1 - r) * (1 - r) / (1 - gamma * r);
+  return gamma * mu * (1 - rDel) * (1 - rDel) / (1 - gamma * rIns);
 }
 
 double IndelParams::totalRightwardDeletionRatePerSite() const {
-  return mu * (1 - r);
+  return mu * (1 - rDel);
 }
 
 double transitionRateForZoneLengthChange (int srcZoneLength, int destZoneLength, const IndelParams& params) {
