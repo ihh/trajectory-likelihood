@@ -16,9 +16,10 @@ const files = opt.argv
 if (files.length < 2)
   throw new Error ("Please specify at least two distribution files")
 
+const normalize = opt.options.normalize
 const distrib = files.map ((filename) => {
   let d = fs.readFileSync(filename).toString().split("\n").map ((line) => line.split(" ").map ((x) => parseFloat(x)).filter ((p) => !isNaN(p))).filter ((line) => line.length)
-  if (opt.options.normalize) {
+  if (normalize) {
     const norm = d.reduce ((sum, row) => row.reduce ((sum, p) => sum + p, sum), 0)
     d = d.map ((row) => row.map ((p) => p / norm))
   }
@@ -37,11 +38,20 @@ const entropy = (dist) => {
 }
 
 const relent = (dist1, dist2) => {
-  let d = 0
+  let d = 0, norm1 = 0
+  dist2.forEach ((row, i) => {
+    row.forEach ((p, j) => {
+      if (i < dist1.length && j < dist1[i].length)
+        norm += p
+    })
+  })
   dist1.forEach ((row, i) => {
     row.forEach ((p, j) => {
-      if (p > 0)
-        d += p * Math.log (p / dist2[i][j])
+      if (normalize)
+        p /= norm
+      const inRange = i < dist2.length && j < dist2[i].length
+      if (p > 0 && (inRange || !normalize))
+        d += p * Math.log (p / (inRange ? dist2[i][j] : 0))
     })
   })
   return d / Math.log(2)
@@ -59,15 +69,33 @@ const moments = (dist) => {
       norm += p
     })
   })
+  ei /= norm
+  ed /= norm
+  ei2 /= norm
+  ed2 /= norm
+  eid /= norm
+  return { ei, ed, ei2, ed2, eid,
+           vi: ei2 - ei*ei,
+           vd: ed2 - ed*ed,
+           cid: eid - ei*ed }
 }
 
 files.forEach ((file, i) => {
-  console.log ("S(" + file + ")= " + entropy (distrib[i]))
+  const m = moments (distrib[i])
+  console.log ("Ei " + file + " " + m.ei)
+  console.log ("Ed " + file + " " + m.ed)
+  console.log ("Vi " + file + " " + m.vi)
+  console.log ("Vd " + file + " " + m.vd)
+  console.log ("Cid " + file + " " + m.cid)
+})
+
+files.forEach ((file, i) => {
+  console.log ("S " + file + " " + entropy (distrib[i]))
 })
 
 files.forEach ((file1, i) => {
   files.forEach ((file2, j) => {
     if (i != j)
-      console.log ("D(" + file1 + "||" + file2 + ")= " + relent (distrib[i], distrib[j]))
+      console.log ("D " + file1 + " " + file2 + " " + relent (distrib[i], distrib[j]))
   })
 })

@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include <boost/program_options.hpp>
 #include "trajec.h"
@@ -27,7 +28,8 @@ int main (int argc, char** argv) {
     ("moments,m", "use method of moments for likelihood calculations")
     ("cim,C", "use de Maio's Cumulative Indel Model for likelihood calculations")
     ("dt,D", po::value<double>()->default_value(.01), "time step for numerical integration")
-    ("seed,d", po::value<int>()->default_value(mt19937::default_seed), "seed for random number generator");
+    ("seed,d", po::value<unsigned long long>()->default_value(mt19937::default_seed), "seed for random number generator")
+    ("seedtime,T", "use current time as a seed");
 
     po::variables_map vm;
     po::parsed_options parsed = po::command_line_parser(argc,argv).options(opts).run();
@@ -40,7 +42,7 @@ int main (int argc, char** argv) {
     }
 
     const IndelParams params (vm.at("gamma").as<double>(), vm.at("mu").as<double>(), vm.at("r").as<double>());
-    const double time = vm.at("time").as<double>();
+    const double t = vm.at("time").as<double>();
 
     const int verbose = vm.at("verbose").as<int>();
 
@@ -49,17 +51,24 @@ int main (int argc, char** argv) {
 
     if (vm.count("simulate")) {
       const SimulationConfig config (vm.at("initlen").as<int>(), vm.at("maxlen").as<int>(), vm.at("trials").as<int>(), verbose);
-      mt19937 rnd (vm.at("seed").as<int>());
-      probs = chopZoneSimulatedProbabilities (params, time, config, rnd, reportCounts);
+      const bool useClock = vm.count("seedtime");
+      unsigned long long seed;
+      if (useClock)
+	seed = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
+      else
+	seed = vm.at("seed").as<unsigned long long>();
+      cerr << "Random number seed: " << seed << endl;
+      mt19937 rnd (seed);
+      probs = chopZoneSimulatedProbabilities (params, t, config, rnd, reportCounts);
     } else if (vm.count("moments")) {
-      const Moments moments (params, time, vm.at("dt").as<double>(), verbose);
+      const Moments moments (params, t, vm.at("dt").as<double>(), verbose);
       probs = moments.chopZoneLikelihoods (vm.at("maxlen").as<int>());
     } else if (vm.count("cim")) {
-      const CumulativeIndelModel cim (params, time, vm.at("dt").as<double>(), verbose);
+      const CumulativeIndelModel cim (params, t, vm.at("dt").as<double>(), verbose);
       probs = cim.chopZoneLikelihoods (vm.at("maxlen").as<int>());
     } else {
       const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), verbose);
-      probs = chopZoneLikelihoods (params, time, config);
+      probs = chopZoneLikelihoods (params, t, config);
     }
 
     double total = 0;
