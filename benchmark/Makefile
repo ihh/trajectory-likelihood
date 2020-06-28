@@ -5,17 +5,10 @@ RELENT = ../relent.js
 all: relents stats
 
 relents: scan-gammas
-<<<<<<< HEAD
 	cat *results | perl -e 'print"gamma mu rdel rins t method D reversible\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){push@m,($$m[3]==$$m[2]?"yes":"no");$$m[3]*=$$m[0];print"@m\n"}}' >$@
 
 stats: scan-gammas
 	cat *results | perl -e 'print"stat gamma mu rdel rins t method value reversible\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){push@m,($$m[4]==$$m[3]?"yes":"no");$$m[4]*=$$m[1];print"@m\n"}}' >$@
-=======
-	cat *results | perl -e 'print"gamma mu rdel rins t method D\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
-
-stats: scan-gammas
-	cat *results | perl -e 'print"stat gamma mu rdel rins t method value\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
->>>>>>> parent of eb3cda5... benchmark
 
 scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu
 
@@ -39,16 +32,12 @@ g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1
 g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj
 	$(RELENT) --normalize $^ >$@
 
-<<<<<<< HEAD
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 0.5 }
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 200000 --initlen 1000 --maxlen 100 >$@) >&$@.log
 	grep -v "Beginning simulation trial" $@.log >$@.log.short
 	rm $@.log
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_number(T,Tn), Tn > 0.5 }
-=======
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim:
->>>>>>> parent of eb3cda5... benchmark
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 100000 --initlen 1000 --maxlen 100 >$@) >&$@.log
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-traj:
@@ -62,3 +51,4 @@ g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-cim:
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-moments:
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --moments --maxlen 100 --dt .001 >$@) >&$@.log
 
+.SECONDARY:
