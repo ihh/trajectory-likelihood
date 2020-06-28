@@ -10,7 +10,10 @@ $(PREFIX)-scan-r: $(PREFIX)-r.5-scan-time $(PREFIX)-r.75-scan-time $(PREFIX)-r.9
 
 $(PREFIX)-scan-time: $(PREFIX)-t.015625-results $(PREFIX)-t.03125-results $(PREFIX)-t.03125-results $(PREFIX)-t.0625-results $(PREFIX)-t.125-results $(PREFIX)-t.25-results $(PREFIX)-t.5-results $(PREFIX)-t1-results $(PREFIX)-t2-results $(PREFIX)-t4-results $(PREFIX)-t8-results
 
-$(PREFIX)-results: $(PREFIX)-sim $(PREFIX)-traj $(PREFIX)-cim $(PREFIX)-moments
+g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1-$(PREFIX)-cim
+	$(RELENT) --normalize $^ >$@
+
+g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj
 	$(RELENT) --normalize $^ >$@
 
 g$(G)-m$(M)-r$(R)-t$(T)-sim:

@@ -42,7 +42,7 @@ const relent = (dist1, dist2) => {
   dist2.forEach ((row, i) => {
     row.forEach ((p, j) => {
       if (i < dist1.length && j < dist1[i].length)
-        norm += p
+        norm += dist1[i][j]
     })
   })
   dist1.forEach ((row, i) => {
