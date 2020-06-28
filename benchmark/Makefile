@@ -40,7 +40,7 @@ g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_number(T,Tn), Tn > 0.5 }
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-traj:
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --maxlen 30 >$@) >&$@.log
-	grep -v "Beginning simulation trial" $@.log >$@.log.short
+	grep -v "Likelihood for" $@.log >$@.log.short
 	rm $@.log
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-cim:
