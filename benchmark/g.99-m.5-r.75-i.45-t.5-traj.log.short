@@ -2,6 +2,6 @@ Entry in row i, column j is probability of inserting i residues and deleting j r
 Total: 0.999089
 E[#ins]=0.0509621 E[#del]=0.266675 E[#ins^2]=0.137522 E[#del^2]=2.15744 V[#ins]=0.134925 V[#del]=2.08633 E[#ins*#del]=0.0229558 Cov(#ins,#del)=0.0093655
 
-real	0m10.478s
-user	0m10.384s
-sys	0m0.056s
+real	0m11.151s
+user	0m10.911s
+sys	0m0.107s

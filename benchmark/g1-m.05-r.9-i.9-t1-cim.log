@@ -1,0 +1,8 @@
+Cumulative indel method: ri=0.005 gi=0.9
+Entry in row i, column j is probability of inserting i residues and deleting j residues before the next match
+Total: 1
+E[#ins]=0.0512534 E[#del]=0.0512535 E[#ins^2]=0.988839 E[#del^2]=0.988686 V[#ins]=0.986212 V[#del]=0.986059 E[#ins*#del]=0.0146591 Cov(#ins,#del)=0.0120322
+
+real	0m0.015s
+user	0m0.008s
+sys	0m0.004s
