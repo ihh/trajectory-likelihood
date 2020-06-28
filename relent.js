@@ -41,6 +41,20 @@ const relent = (dist1, dist2) => {
   return d / Math.log(2)
 }
 
+const moments = (dist) => {
+  let ei = 0, ed = 0, ei2 = 0, ed2 = 0, eid = 0, norm = 0
+  dist.forEach ((row, i) => {
+    row.forEach ((p, d) => {
+      ei += i*p
+      ed += d*p
+      ei2 += i*i*p
+      ed2 += d*d*p
+      eid += i*d*p
+      norm += p
+    })
+  })
+}
+
 files.forEach ((file, i) => {
   console.log ("S(" + file + ")= " + entropy (distrib[i]))
 })
