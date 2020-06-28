@@ -2,13 +2,13 @@
 TL = ../trajeclike -v2
 RELENT = ../relent.js
 
-all: relents
+all: relents stats
 
-relents: # scan-gammas
-	cat *results | perl -e 'print"gamma mu r t method D\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
+relents: scan-gammas
+	cat *results | perl -e 'print"gamma mu rdel rins t method D\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
 
-stats: # scan-gammas
-	cat *results | perl -e 'print"stat gamma mu r t method value\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
+stats: scan-gammas
+	cat *results | perl -e 'print"stat gamma mu rdel rins t method value\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
 
 scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu
 
