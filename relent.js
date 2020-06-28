@@ -38,7 +38,7 @@ const entropy = (dist) => {
 }
 
 const relent = (dist1, dist2) => {
-  let d = 0, norm1 = 0
+  let d = 0, norm = 0
   dist2.forEach ((row, i) => {
     row.forEach ((p, j) => {
       if (i < dist1.length && j < dist1[i].length)
