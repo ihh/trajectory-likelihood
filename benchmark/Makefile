@@ -5,7 +5,7 @@ RELENT = ../relent.js
 all: relents stats times
 
 times:
-	../trajeclike --maxlen 40 --benchmark >$@
+	../trajeclike --maxlen 40 --benchmark --trials 10 >$@
 
 relents: scan-gammas
 	cat *results | perl -e 'print"gamma mu rdel rins t method D reversible\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){push@m,($$m[3]==$$m[2]?"yes":"no");$$m[3]*=$$m[0];print"@m\n"}}' >$@

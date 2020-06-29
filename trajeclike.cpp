@@ -56,14 +56,21 @@ int main (int argc, char** argv) {
 
     if (vm.count("benchmark")) {
       const int E = vm.at("maxevents").as<int>(), maxL = vm.at("maxlen").as<int>();
-      if (verbose)
-	cerr << "chopZoneLength time/uS" << endl;
+      cout << "chopZoneLength meanTime/uS error" << endl;
+      const int trials = vm.at("trials").as<int>();
       for (int L = 1; L <= maxL; ++L) {
-	const auto tStart = std::chrono::system_clock::now();
-	const ChopZoneConfig config (E, L, verbose);
-	(void) chopZoneLikelihoods (params, t, config);
-	const auto tEnd = std::chrono::system_clock::now();
-	cout << L << " " << std::chrono::duration_cast< std::chrono::microseconds >(tEnd - tStart).count() << endl;
+	double tSum = 0, tSum2 = 0;
+	for (int n = 0; n < trials; ++n) {
+	  const auto tStart = std::chrono::system_clock::now();
+	  const ChopZoneConfig config (E, L, verbose);
+	  (void) chopZoneLikelihoods (params, t, config);
+	  const auto tEnd = std::chrono::system_clock::now();
+	  const double t = std::chrono::duration_cast< std::chrono::microseconds >(tEnd - tStart).count();
+	  tSum += t;
+	  tSum2 += t*t;
+	}
+	const double tMean = tSum / (double) trials, t2Mean = tSum2 / (double) trials;
+	cout << L << " " << tMean << " " << sqrt ((t2Mean - tMean*tMean) / (double) trials) << endl;
       }
     } else {
     
