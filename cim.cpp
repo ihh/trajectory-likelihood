@@ -2,6 +2,7 @@
 #include <iostream>
 #include "cim.h"
 #include "rk4.h"
+#include "mid.h"
 
 namespace TrajectoryLikelihood {
 
@@ -77,7 +78,6 @@ namespace TrajectoryLikelihood {
   }
 
   vector<vector<double> > CumulativeIndelModel::chopZoneLikelihoods (int maxLen) const {
-    vector<vector<double> > pGap (maxLen + 1, vector<double> (maxLen + 1, 0));
     const auto& a = A.back();
     const double t = tMax;
     const double m2m = 1 - Pit(a,t) - Pdt(a,t) + Pidt(a,t),
@@ -88,31 +88,7 @@ namespace TrajectoryLikelihood {
       d2i = (1 - gdt(a,t)) * Pidt(a,t) / Pdt(a,t),
       i2m = 1 - git(a,t),
       i2i = git(a,t);
-    if (verbose > 2)
-      cerr << "Pair HMM probabilities: m2m=" << m2m << " m2i=" << m2i << " m2d=" << m2d << " i2m=" << i2m << " i2i=" << i2i << " d2m=" << d2m << " d2d=" << d2d << " d2i=" << d2i << endl;
-    if (verbose > 3)
-      cerr << "Pair HMM probability sums: m2*=" << (m2m+m2i+m2d) << " i2*=" << (i2m+i2i) << " d2*=" << (d2m+d2i+d2d) << endl;
-    vector<vector<vector<double> > > fwd (2, vector<vector<double> > (maxLen + 1, vector<double> (2, 0)));  // fwd[i%2][j][state] where i=#ins, j=#del, state = 0(ins) or 1(del)
-    for (int i = 0; i <= maxLen; ++i) {
-      const int row = i % 2;
-      const int prev = (i - 1) % 2;
-      for (int j = 0; j <= maxLen; ++j) {
-	fwd[row][j][0] = (i == 0
-			  ? 0
-			  : ((i == 1 && j == 0 ? m2i : 0)
-			     + fwd[prev][j][1] * d2i
-			     + fwd[prev][j][0] * i2i));
-
-	fwd[row][j][1] = (j == 0
-			  ? 0
-			  : ((j == 1 && i == 0 ? m2d : 0)
-			     + fwd[row][j-1][1] * d2d));
-	
-	pGap[i][j] = (i == 0 && j == 0
-		      ? m2m
-		      : (fwd[row][j][0] * i2m + fwd[row][j][1] * d2m));
-      }
-    }
-    return pGap;
+    const MID_HMM hmm (m2m, m2i, m2d, i2m, i2i, 0., d2m, d2i, d2d, verbose);
+    return hmm.chopZoneLikelihoods (maxLen);
   }
 }

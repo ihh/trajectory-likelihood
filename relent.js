@@ -66,14 +66,8 @@ const moments = (dist) => {
       ei2 += i*i*p
       ed2 += d*d*p
       eid += i*d*p
-      norm += p
     })
   })
-  ei /= norm
-  ed /= norm
-  ei2 /= norm
-  ed2 /= norm
-  eid /= norm
   return { ei, ed, ei2, ed2, eid,
            vi: ei2 - ei*ei,
            vd: ed2 - ed*ed,
