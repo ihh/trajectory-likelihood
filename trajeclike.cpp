@@ -5,6 +5,7 @@
 #include "simulate.h"
 #include "moments.h"
 #include "cim.h"
+#include "tkf.h"
 
 using namespace TrajectoryLikelihood;
 using namespace std;
@@ -17,8 +18,8 @@ int main (int argc, char** argv) {
     ("verbose,v", po::value<int>()->default_value(0), "logging verbosity")
     ("gamma", po::value<double>()->default_value(.99), "gamma parameter from MLH 2004 (parameter of equilibrium geometric distribution over sequence lengths)")
     ("mu", po::value<double>()->default_value(.049), "mu parameter from MLH 2004 (rightward deletion rate)")
-    ("r,r", po::value<double>()->default_value(.543), "r parameter from MLH 2004 (parameter of geometric distribution over deletion lengths)")
-    ("rins,I", po::value<double>(), "(1/gamma) * parameter of geometric distribution over insertion lengths (default is same as deletion rate)")
+    ("r,r", po::value<double>()->default_value(.543), "r parameter from MLH 2004 (deletion extension probability, i.e. parameter of geometric distribution over deletion lengths)")
+    ("rins,I", po::value<double>(), "(1/gamma) * parameter of geometric distribution over insertion lengths (insertion extension probability; default is same as deletion parameter)")
     ("time,t", po::value<double>()->default_value(1), "time parameter")
     ("maxevents,E", po::value<int>()->default_value(3), "max # of indel events in trajectory")
     ("maxlen,L", po::value<int>()->default_value(10), "max length of chop zone")
@@ -27,8 +28,12 @@ int main (int argc, char** argv) {
     ("counts,c", "report simulation counts instead of probabilities")
     ("initlen,i", po::value<int>()->default_value(1000), "initial sequence length for simulation")
     ("trials,n", po::value<int>()->default_value(100000), "number of simulation trials")
-    ("moments,m", "use method of moments for likelihood calculations")
+    ("moments,m", "use method of moments (Holmes 2020) for likelihood calculations")
     ("cim,C", "use de Maio's Cumulative Indel Model for likelihood calculations")
+    ("tkf91", "use TKF91 Pair HMM for likelihood calculations")
+    ("tkf92", "use TKF92 Pair HMM for likelihood calculations")
+    ("rs07", "use RS07 Pair HMM for likelihood calculations")
+    ("prank", "use PRANK Pair HMM for likelihood calculations")
     ("dt,D", po::value<double>()->default_value(.01), "time step for numerical integration")
     ("seed,d", po::value<unsigned long long>()->default_value(mt19937::default_seed), "seed for random number generator")
     ("seedtime,T", "use current time as a seed");
@@ -52,13 +57,15 @@ int main (int argc, char** argv) {
     const int verbose = vm.at("verbose").as<int>();
 
     const bool reportCounts = vm.count("simulate") && vm.count("counts");
+    const int maxLen = vm.at("maxlen").as<int>();
+    const double dt = vm.at("dt").as<double>();
     vector<vector<double> > probs;
 
     if (vm.count("benchmark")) {
-      const int E = vm.at("maxevents").as<int>(), maxL = vm.at("maxlen").as<int>();
+      const int E = vm.at("maxevents").as<int>();
       cout << "chopZoneLength meanTime/uS error" << endl;
       const int trials = vm.at("trials").as<int>();
-      for (int L = 1; L <= maxL; ++L) {
+      for (int L = 1; L <= maxLen; ++L) {
 	double tSum = 0, tSum2 = 0;
 	for (int n = 0; n < trials; ++n) {
 	  const auto tStart = std::chrono::system_clock::now();
@@ -75,7 +82,7 @@ int main (int argc, char** argv) {
     } else {
     
       if (vm.count("simulate")) {
-	const SimulationConfig config (vm.at("initlen").as<int>(), vm.at("maxlen").as<int>(), vm.at("trials").as<int>(), verbose);
+	const SimulationConfig config (vm.at("initlen").as<int>(), maxLen, vm.at("trials").as<int>(), verbose);
 	const bool useClock = vm.count("seedtime");
 	unsigned long long seed;
 	if (useClock)
@@ -86,13 +93,25 @@ int main (int argc, char** argv) {
 	mt19937 rnd (seed);
 	probs = chopZoneSimulatedProbabilities (params, t, config, rnd, reportCounts);
       } else if (vm.count("moments")) {
-	const Moments moments (params, t, vm.at("dt").as<double>(), verbose);
-	probs = moments.chopZoneLikelihoods (vm.at("maxlen").as<int>());
+	const Moments moments (params, t, dt, verbose);
+	probs = moments.chopZoneLikelihoods (maxLen);
       } else if (vm.count("cim")) {
-	const CumulativeIndelModel cim (params, t, vm.at("dt").as<double>(), verbose);
-	probs = cim.chopZoneLikelihoods (vm.at("maxlen").as<int>());
+	const CumulativeIndelModel cim (params, t, dt, verbose);
+	probs = cim.chopZoneLikelihoods (maxLen);
+      } else if (vm.count("tkf91")) {
+	const TKF91 tkf91 (params, t, verbose);
+	probs = tkf91.chopZoneLikelihoods (maxLen);
+      } else if (vm.count("tkf92")) {
+	const TKF92 tkf92 (params, t, verbose);
+	probs = tkf92.chopZoneLikelihoods (maxLen);
+      } else if (vm.count("prank")) {
+	const PRANK prank (params, t, verbose);
+	probs = prank.chopZoneLikelihoods (maxLen);
+      } else if (vm.count("rs07")) {
+	const RS07 rs07 (params, t, verbose);
+	probs = rs07.chopZoneLikelihoods (maxLen);
       } else {
-	const ChopZoneConfig config (vm.at("maxevents").as<int>(), vm.at("maxlen").as<int>(), verbose);
+	const ChopZoneConfig config (vm.at("maxevents").as<int>(), maxLen, verbose);
 	probs = chopZoneLikelihoods (params, t, config);
       }
 

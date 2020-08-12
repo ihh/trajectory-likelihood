@@ -9,9 +9,11 @@ namespace TrajectoryLikelihood {
     p(d2m), q(d2i), r(d2d)
   {
     if (verbose > 2)
-      cerr << "Pair HMM probabilities: m2m=" << m2m << " m2i=" << m2i << " m2d=" << m2d << " i2m=" << i2m << " i2i=" << i2i << " d2m=" << d2m << " d2d=" << d2d << " d2i=" << d2i << endl;
+      cerr << "Pair HMM probabilities: m2m=" << m2m << " m2i=" << m2i << " m2d=" << m2d
+	   << " i2m=" << i2m << " i2i=" << i2i << " i2d=" << i2d
+	   << " d2m=" << d2m << " d2d=" << d2d << " d2i=" << d2i << endl;
     if (verbose > 3)
-      cerr << "Pair HMM probability sums: m2*=" << (m2m+m2i+m2d) << " i2*=" << (i2m+i2i) << " d2*=" << (d2m+d2i+d2d) << endl;
+      cerr << "Pair HMM probability sums: m2x=" << (m2m+m2i+m2d) << " i2x=" << (i2m+i2i+i2d) << " d2x=" << (d2m+d2i+d2d) << endl;
   }
 
   vector<vector<double> > MID_HMM::chopZoneLikelihoods (int maxLen) const {
