@@ -29,10 +29,10 @@ $(PREFIX)-scan-time-short: $(PREFIX)-scan-time-tiny $(PREFIX)-t.125-results $(PR
 #$(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.0220970869120796-results $(PREFIX)-t.03125-results $(PREFIX)-t.0441941738241592-results $(PREFIX)-t.0625-results $(PREFIX)-t.0883883476483184-results
 $(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.03125-results $(PREFIX)-t.0625-results
 
-g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1-$(PREFIX)-cim
+g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1-$(PREFIX)-cim g1-$(PREFIX)-tkf91 g1-$(PREFIX)-tkf92 g1-$(PREFIX)-rs07 g1-$(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
 
-g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj
+g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj g.9-$(PREFIX)-tkf91 g.9-$(PREFIX)-tkf92 g.9-$(PREFIX)-rs07 g.9-$(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 1 }
@@ -60,6 +60,20 @@ g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-cim:
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-moments:
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --moments --maxlen 100 --dt .0001 >$@) >&$@.log
+
+
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-tkf91:
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --tkf91 --maxlen 100 >$@) >&$@.log
+
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-tkf92:
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --tkf92 --maxlen 100 >$@) >&$@.log
+
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-rs07:
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --rs07 --maxlen 100 >$@) >&$@.log
+
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-prank:
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --prank --maxlen 100 >$@) >&$@.log
+
 
 shorten-logs: $(addsuffix .short,$(wildcard *-traj.log) $(wildcard *-sim.log))
 
