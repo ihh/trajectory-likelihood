@@ -11,7 +11,7 @@ namespace TrajectoryLikelihood {
   struct TKF {
     const IndelParams& params;
     int verbose;
-    const double mu, lambda, alpha, beta, gamma;
+    double mu, lambda, alpha, beta, gamma;
     TKF (const IndelParams&, double t, int verbose);
   };
 
