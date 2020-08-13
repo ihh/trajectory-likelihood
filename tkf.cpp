@@ -10,7 +10,9 @@ namespace TrajectoryLikelihood {
     mu (params.mu),
     lambda (params.gamma * params.mu),
     alpha (exp(-mu*t)),
-    beta ((lambda*(exp(-lambda*t)-exp(-mu*t)))/(mu*exp(-lambda*t)-lambda*exp(-mu*t))),
+    beta (params.gamma == 1
+	  ? (lambda*t / (1 + lambda*t))
+	  : ((lambda*(exp(-lambda*t)-exp(-mu*t)))/(mu*exp(-lambda*t)-lambda*exp(-mu*t)))),
     gamma (1 - mu*beta/(lambda*(1-alpha)))
   {
     if (verbose > 4)
