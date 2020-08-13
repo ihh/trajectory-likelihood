@@ -29,8 +29,12 @@ $(PREFIX)-scan-time-short: $(PREFIX)-scan-time-tiny $(PREFIX)-t.125-results $(PR
 #$(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.0220970869120796-results $(PREFIX)-t.03125-results $(PREFIX)-t.0441941738241592-results $(PREFIX)-t.0625-results $(PREFIX)-t.0883883476483184-results
 $(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.03125-results $(PREFIX)-t.0625-results
 
-$(PREFIX)-scan-time-fine:
-	$(MAKE) `perl -e '@m=map("$(PREFIX)-t".$$_."-results",grep(s/^0\././,map(2**($$_/8),-48..24)));print"@m"'`
+FINE_TIMES = $(shell perl -e '@m=grep(s/^0\././ || 1,map(2**($$_/8),-48..24));print"@m"')
+
+fine:
+	echo $(FINE_TIMES)
+
+$(PREFIX)-scan-time-fine: $(addprefix $(PREFIX)-t,$(addsuffix -results,$(FINE_TIMES)))
 
 g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1-$(PREFIX)-cim g1-$(PREFIX)-tkf91 g1-$(PREFIX)-tkf92 g1-$(PREFIX)-rs07 g1-$(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
@@ -38,7 +42,12 @@ g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1
 g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj g.9$(PREFIX)-tkf91 g.9$(PREFIX)-tkf92 g.9$(PREFIX)-rs07 g.9$(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
 
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 1 }
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< .1 }
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 10000000 --initlen 1000 --maxlen 100 >$@) >&$@.log
+	grep -v "Beginning simulation trial" $@.log >$@.log.short
+	rm $@.log
+
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > .1, Tn =< 1 }
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 1000000 --initlen 1000 --maxlen 100 >$@) >&$@.log
 	grep -v "Beginning simulation trial" $@.log >$@.log.short
 	rm $@.log
