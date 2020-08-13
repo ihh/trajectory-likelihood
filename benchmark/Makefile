@@ -13,7 +13,7 @@ relents: scan-gammas
 stats: scan-gammas
 	cat *results | perl -e 'print"stat gamma mu rdel rins t method value reversible\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){push@m,($$m[4]==$$m[3]?"yes":"no");$$m[4]*=$$m[1];print"@m\n"}}' >$@
 
-scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu
+scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu g1-m.5-r.5-i.5-scan-time-fine
 
 $(PREFIX)-scan-mu: $(PREFIX)-m.05-scan-rdel $(PREFIX)-m.5-scan-rdel
 
@@ -28,6 +28,9 @@ $(PREFIX)-scan-time-short: $(PREFIX)-scan-time-tiny $(PREFIX)-t.125-results $(PR
 
 #$(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.0220970869120796-results $(PREFIX)-t.03125-results $(PREFIX)-t.0441941738241592-results $(PREFIX)-t.0625-results $(PREFIX)-t.0883883476483184-results
 $(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.03125-results $(PREFIX)-t.0625-results
+
+$(PREFIX)-scan-time-fine:
+	$(MAKE) `perl -e '@m=map("$(PREFIX)-t".$$_."-results",grep(s/^0\././,map(2**($$_/8),-48..24)));print"@m"'`
 
 g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1-$(PREFIX)-cim g1-$(PREFIX)-tkf91 g1-$(PREFIX)-tkf92 g1-$(PREFIX)-rs07 g1-$(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
