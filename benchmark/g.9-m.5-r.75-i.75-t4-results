@@ -34,58 +34,58 @@ Ed g.9-m.5-r.75-i.75-t4-rs07 0.6961723529684791
 Vi g.9-m.5-r.75-i.75-t4-rs07 176.7274721510955
 Vd g.9-m.5-r.75-i.75-t4-rs07 3.8198537025993424
 Cid g.9-m.5-r.75-i.75-t4-rs07 23.27102099877858
-P0 g.9-m.5-r.75-i.75-t4-prank -9.678282281445434e-7
-Ei g.9-m.5-r.75-i.75-t4-prank 93.48836623737517
-Ed g.9-m.5-r.75-i.75-t4-prank 22.218549061296752
-Vi g.9-m.5-r.75-i.75-t4-prank 48.900822864758084
-Vd g.9-m.5-r.75-i.75-t4-prank 29.660432473403887
-Cid g.9-m.5-r.75-i.75-t4-prank 11.276962506894506
+P0 g.9-m.5-r.75-i.75-t4-prank 1
+Ei g.9-m.5-r.75-i.75-t4-prank 0
+Ed g.9-m.5-r.75-i.75-t4-prank 0
+Vi g.9-m.5-r.75-i.75-t4-prank 0
+Vd g.9-m.5-r.75-i.75-t4-prank 0
+Cid g.9-m.5-r.75-i.75-t4-prank 0
 S g.9-m.5-r.75-i.75-t4-sim 5.303419028722587
 S g.9-m.5-r.75-i.75-t4-moments 5.5341619834700895
 S g.9-m.5-r.75-i.75-t4-traj 2.845704141222404
 S g.9-m.5-r.75-i.75-t4-tkf91 7.778764047022679
 S g.9-m.5-r.75-i.75-t4-tkf92 3.40584846749211
 S g.9-m.5-r.75-i.75-t4-rs07 2.5536849200093195
-S g.9-m.5-r.75-i.75-t4-prank 8.66559592256229
+S g.9-m.5-r.75-i.75-t4-prank 0
 D g.9-m.5-r.75-i.75-t4-sim g.9-m.5-r.75-i.75-t4-moments 0.0748822941756113
 D g.9-m.5-r.75-i.75-t4-sim g.9-m.5-r.75-i.75-t4-traj 0.7666668390087438
 D g.9-m.5-r.75-i.75-t4-sim g.9-m.5-r.75-i.75-t4-tkf91 2.0688709502752
 D g.9-m.5-r.75-i.75-t4-sim g.9-m.5-r.75-i.75-t4-tkf92 1.0369032592881937
 D g.9-m.5-r.75-i.75-t4-sim g.9-m.5-r.75-i.75-t4-rs07 14.140288796983402
-D g.9-m.5-r.75-i.75-t4-sim g.9-m.5-r.75-i.75-t4-prank NaN
+D g.9-m.5-r.75-i.75-t4-sim g.9-m.5-r.75-i.75-t4-prank Infinity
 D g.9-m.5-r.75-i.75-t4-moments g.9-m.5-r.75-i.75-t4-sim Infinity
 D g.9-m.5-r.75-i.75-t4-moments g.9-m.5-r.75-i.75-t4-traj 1.2121217008623417
 D g.9-m.5-r.75-i.75-t4-moments g.9-m.5-r.75-i.75-t4-tkf91 2.039840976208299
 D g.9-m.5-r.75-i.75-t4-moments g.9-m.5-r.75-i.75-t4-tkf92 0.9565521052709091
 D g.9-m.5-r.75-i.75-t4-moments g.9-m.5-r.75-i.75-t4-rs07 15.443022152673743
-D g.9-m.5-r.75-i.75-t4-moments g.9-m.5-r.75-i.75-t4-prank NaN
+D g.9-m.5-r.75-i.75-t4-moments g.9-m.5-r.75-i.75-t4-prank Infinity
 D g.9-m.5-r.75-i.75-t4-traj g.9-m.5-r.75-i.75-t4-sim 0.31702180927023765
 D g.9-m.5-r.75-i.75-t4-traj g.9-m.5-r.75-i.75-t4-moments 0.4728710521887955
 D g.9-m.5-r.75-i.75-t4-traj g.9-m.5-r.75-i.75-t4-tkf91 2.271906093312951
 D g.9-m.5-r.75-i.75-t4-traj g.9-m.5-r.75-i.75-t4-tkf92 1.1601427349793105
 D g.9-m.5-r.75-i.75-t4-traj g.9-m.5-r.75-i.75-t4-rs07 2.760318191473748
-D g.9-m.5-r.75-i.75-t4-traj g.9-m.5-r.75-i.75-t4-prank NaN
+D g.9-m.5-r.75-i.75-t4-traj g.9-m.5-r.75-i.75-t4-prank Infinity
 D g.9-m.5-r.75-i.75-t4-tkf91 g.9-m.5-r.75-i.75-t4-sim Infinity
 D g.9-m.5-r.75-i.75-t4-tkf91 g.9-m.5-r.75-i.75-t4-moments 1.431453619140457
 D g.9-m.5-r.75-i.75-t4-tkf91 g.9-m.5-r.75-i.75-t4-traj 4.415118828965178
 D g.9-m.5-r.75-i.75-t4-tkf91 g.9-m.5-r.75-i.75-t4-tkf92 3.2353948359742515
 D g.9-m.5-r.75-i.75-t4-tkf91 g.9-m.5-r.75-i.75-t4-rs07 11.04883546305676
-D g.9-m.5-r.75-i.75-t4-tkf91 g.9-m.5-r.75-i.75-t4-prank NaN
+D g.9-m.5-r.75-i.75-t4-tkf91 g.9-m.5-r.75-i.75-t4-prank Infinity
 D g.9-m.5-r.75-i.75-t4-tkf92 g.9-m.5-r.75-i.75-t4-sim Infinity
 D g.9-m.5-r.75-i.75-t4-tkf92 g.9-m.5-r.75-i.75-t4-moments 0.9987546966840943
 D g.9-m.5-r.75-i.75-t4-tkf92 g.9-m.5-r.75-i.75-t4-traj 1.2095188886853845
 D g.9-m.5-r.75-i.75-t4-tkf92 g.9-m.5-r.75-i.75-t4-tkf91 3.3900664889459313
 D g.9-m.5-r.75-i.75-t4-tkf92 g.9-m.5-r.75-i.75-t4-rs07 9.18650589735479
-D g.9-m.5-r.75-i.75-t4-tkf92 g.9-m.5-r.75-i.75-t4-prank NaN
+D g.9-m.5-r.75-i.75-t4-tkf92 g.9-m.5-r.75-i.75-t4-prank Infinity
 D g.9-m.5-r.75-i.75-t4-rs07 g.9-m.5-r.75-i.75-t4-sim Infinity
 D g.9-m.5-r.75-i.75-t4-rs07 g.9-m.5-r.75-i.75-t4-moments 1.7059211120986892
 D g.9-m.5-r.75-i.75-t4-rs07 g.9-m.5-r.75-i.75-t4-traj 1.2079850039652518
 D g.9-m.5-r.75-i.75-t4-rs07 g.9-m.5-r.75-i.75-t4-tkf91 4.25810689328385
 D g.9-m.5-r.75-i.75-t4-rs07 g.9-m.5-r.75-i.75-t4-tkf92 0.5778565858760126
-D g.9-m.5-r.75-i.75-t4-rs07 g.9-m.5-r.75-i.75-t4-prank NaN
-D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-sim Infinity
-D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-moments 31.53424963529044
-D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-traj 18.386536744945776
-D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-tkf91 33.97056812349613
-D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-tkf92 11.474051285213566
-D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-rs07 12.77967915002525
+D g.9-m.5-r.75-i.75-t4-rs07 g.9-m.5-r.75-i.75-t4-prank Infinity
+D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-sim 1.191086976167467
+D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-moments 1.2051863272923373
+D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-traj 0.7276419734812706
+D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-tkf91 4.2812314653389185
+D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-tkf92 0.3780362181621109
+D g.9-m.5-r.75-i.75-t4-prank g.9-m.5-r.75-i.75-t4-rs07 0.3427189161068125
