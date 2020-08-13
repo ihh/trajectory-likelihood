@@ -32,7 +32,7 @@ $(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.03125-results $
 g1-$(PREFIX)-results: g1-$(PREFIX)-sim g1-$(PREFIX)-moments g1-$(PREFIX)-traj g1-$(PREFIX)-cim g1-$(PREFIX)-tkf91 g1-$(PREFIX)-tkf92 g1-$(PREFIX)-rs07 g1-$(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
 
-g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj g.9-$(PREFIX)-tkf91 g.9-$(PREFIX)-tkf92 g.9-$(PREFIX)-rs07 g.9-$(PREFIX)-prank
+g.9$(PREFIX)-results: g.9$(PREFIX)-sim g.9$(PREFIX)-moments g.9$(PREFIX)-traj g.9$(PREFIX)-tkf91 g.9$(PREFIX)-tkf92 g.9$(PREFIX)-rs07 g.9$(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 1 }
