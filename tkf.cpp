@@ -54,6 +54,8 @@ namespace TrajectoryLikelihood {
     if (verbose > 4)
       cerr << "PRANK probabilities: epsilon=" << epsilon << " gamma=" << gamma << " delta=" << delta << endl;
   }
+
+  const double PRANK::maxDelta = .49999;
   
   vector<vector<double> > PRANK::chopZoneLikelihoods (int maxLen) const {
     const MID_HMM hmm (gamma + (1-gamma)*(1-2*delta), (1-gamma)*delta, (1-gamma)*delta,
@@ -72,7 +74,9 @@ namespace TrajectoryLikelihood {
     if (verbose > 4)
       cerr << "RS07 probabilities: epsilon=" << epsilon << " delta=" << delta << endl;
   }
-  
+
+  const double RS07::maxDelta = .49999;
+
   vector<vector<double> > RS07::chopZoneLikelihoods (int maxLen) const {
     const MID_HMM hmm (epsilon + (1-epsilon)*(1-2*delta), (1-epsilon)*delta, (1-epsilon)*delta,
 		       (1-epsilon)*(1-2*delta), epsilon + (1-epsilon)*delta, (1-epsilon)*delta,
