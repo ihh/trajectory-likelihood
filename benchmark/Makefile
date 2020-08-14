@@ -14,7 +14,7 @@ stats: scan-gammas
 	cat *results | perl -e 'print"stat gamma mu rdel rins t method value reversible\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){push@m,($$m[4]==$$m[3]?"yes":"no");$$m[4]*=$$m[1];print"@m\n"}}' >$@
 
 #scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine
-scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine
+scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine g.99-m1-r.5-t.25-scan-rins-fine
 
 $(PREFIX)-scan-mu: $(PREFIX)-m.05-scan-rdel $(PREFIX)-m.5-scan-rdel
 
