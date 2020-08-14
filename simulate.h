@@ -13,9 +13,9 @@ namespace TrajectoryLikelihood {
   };
 
   struct SimulationCounts {
-    vector<vector<int> > count;
+    vector<vector<long long> > count;
     int overflowCount;
-    SimulationCounts (int len) : count (len + 1, vector<int> (len + 1, 0)), overflowCount(0) { }
+    SimulationCounts (int len) : count (len + 1, vector<long long> (len + 1, 0)), overflowCount(0) { }
   };
   
   SimulationCounts chopZoneSimulatedCounts (const IndelParams& params, double time, const SimulationConfig& config, mt19937& rnd);   // result is indexed [nDeleted][nInserted]

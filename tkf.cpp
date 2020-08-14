@@ -49,11 +49,13 @@ namespace TrajectoryLikelihood {
     verbose (verbose),
     epsilon (params.rDel),
     gamma (epsilon),
-    delta (1 - exp(-params.totalInsertionRatePerSite()*t/(1-gamma)))
+    delta (min (maxDelta, 1 - exp(-params.totalInsertionRatePerSite()*t/(1-gamma))))
   {
     if (verbose > 4)
       cerr << "PRANK probabilities: epsilon=" << epsilon << " gamma=" << gamma << " delta=" << delta << endl;
   }
+
+  const double PRANK::maxDelta = .49999;
   
   vector<vector<double> > PRANK::chopZoneLikelihoods (int maxLen) const {
     const MID_HMM hmm (gamma + (1-gamma)*(1-2*delta), (1-gamma)*delta, (1-gamma)*delta,
@@ -67,12 +69,14 @@ namespace TrajectoryLikelihood {
   RS07::RS07 (const IndelParams& params, double t, int verbose) :
     verbose (verbose),
     epsilon (params.rDel),
-    delta (1 / (1 + 1 / (1 - exp(-params.totalInsertionRatePerSite()*t/(1-epsilon)))))
+    delta (min (maxDelta, 1 / (1 + 1 / (1 - exp(-params.totalInsertionRatePerSite()*t/(1-epsilon))))))
   {
     if (verbose > 4)
-      cerr << "PRANK probabilities: epsilon=" << epsilon << " delta=" << delta << endl;
+      cerr << "RS07 probabilities: epsilon=" << epsilon << " delta=" << delta << endl;
   }
-  
+
+  const double RS07::maxDelta = .49999;
+
   vector<vector<double> > RS07::chopZoneLikelihoods (int maxLen) const {
     const MID_HMM hmm (epsilon + (1-epsilon)*(1-2*delta), (1-epsilon)*delta, (1-epsilon)*delta,
 		       (1-epsilon)*(1-2*delta), epsilon + (1-epsilon)*delta, (1-epsilon)*delta,

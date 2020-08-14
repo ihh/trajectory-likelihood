@@ -11,7 +11,7 @@ namespace TrajectoryLikelihood {
   struct TKF {
     const IndelParams& params;
     int verbose;
-    const double mu, lambda, alpha, beta, gamma;
+    double mu, lambda, alpha, beta, gamma;
     TKF (const IndelParams&, double t, int verbose);
   };
 
@@ -29,6 +29,7 @@ namespace TrajectoryLikelihood {
   struct PRANK {
     int verbose;
     double epsilon, gamma, delta;
+    static const double maxDelta;
     PRANK (const IndelParams&, double t, int verbose);
     vector<vector<double> > chopZoneLikelihoods (int maxLen) const;
   };
@@ -36,6 +37,7 @@ namespace TrajectoryLikelihood {
   struct RS07 {
     int verbose;
     double epsilon, delta;
+    static const double maxDelta;
     RS07 (const IndelParams&, double t, int verbose);
     vector<vector<double> > chopZoneLikelihoods (int maxLen) const;
   };
