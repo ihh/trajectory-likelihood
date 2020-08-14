@@ -49,7 +49,7 @@ namespace TrajectoryLikelihood {
     verbose (verbose),
     epsilon (params.rDel),
     gamma (epsilon),
-    delta (min (0.5, 1 - exp(-params.totalInsertionRatePerSite()*t/(1-gamma))))
+    delta (min (maxDelta, 1 - exp(-params.totalInsertionRatePerSite()*t/(1-gamma))))
   {
     if (verbose > 4)
       cerr << "PRANK probabilities: epsilon=" << epsilon << " gamma=" << gamma << " delta=" << delta << endl;
@@ -67,7 +67,7 @@ namespace TrajectoryLikelihood {
   RS07::RS07 (const IndelParams& params, double t, int verbose) :
     verbose (verbose),
     epsilon (params.rDel),
-    delta (min (0.5, 1 / (1 + 1 / (1 - exp(-params.totalInsertionRatePerSite()*t/(1-epsilon))))))
+    delta (min (maxDelta, 1 / (1 + 1 / (1 - exp(-params.totalInsertionRatePerSite()*t/(1-epsilon))))))
   {
     if (verbose > 4)
       cerr << "RS07 probabilities: epsilon=" << epsilon << " delta=" << delta << endl;

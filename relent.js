@@ -17,8 +17,11 @@ if (files.length < 2)
   throw new Error ("Please specify at least two distribution files")
 
 const normalize = opt.options.normalize
-const distrib = files.map ((filename) => {
-  let d = fs.readFileSync(filename).toString().split("\n").map ((line) => line.split(" ").map ((x) => parseFloat(x)).filter ((p) => !isNaN(p))).filter ((line) => line.length)
+const denormDistrib = files.map ((filename) => {
+  return fs.readFileSync(filename).toString().split("\n").map ((line) => line.split(" ").map ((x) => parseFloat(x)).filter ((p) => !isNaN(p))).filter ((line) => line.length)
+  return d
+})
+const distrib = denormDistrib.map ((d) => {
   if (normalize) {
     const norm = d.reduce ((sum, row) => row.reduce ((sum, p) => sum + p, sum), 0)
     d = d.map ((row) => row.map ((p) => p / norm))
@@ -57,7 +60,7 @@ const relent = (dist1, dist2) => {
   return d / Math.log(2)
 }
 
-const moments = (dist) => {
+const moments = (dist, denorm) => {
   let ei = 0, ed = 0, ei2 = 0, ed2 = 0, eid = 0, norm = 0
   dist.forEach ((row, i) => {
     row.forEach ((p, d) => {
@@ -72,11 +75,11 @@ const moments = (dist) => {
            vi: ei2 - ei*ei,
            vd: ed2 - ed*ed,
            cid: eid - ei*ed,
-           p0: dist[0][0] }
+           p0: denorm[0][0] }
 }
 
 files.forEach ((file, i) => {
-  const m = moments (distrib[i])
+  const m = moments (distrib[i], denormDistrib[i])
   console.log ("P0 " + file + " " + m.p0)
   console.log ("Ei " + file + " " + m.ei)
   console.log ("Ed " + file + " " + m.ed)

@@ -112,13 +112,13 @@ namespace TrajectoryLikelihood {
   vector<vector<double> > chopZoneSimulatedProbabilities (const IndelParams& params, double time, const SimulationConfig& config, mt19937& rnd, bool reportCountsInstead) {
     const SimulationCounts simCounts = chopZoneSimulatedCounts (params, time, config, rnd);
     vector<vector<double> > probs (config.maxGapLen + 1, vector<double> (config.maxGapLen + 1, 0.));
-    int norm;
+    long long norm;
     if (reportCountsInstead)
       norm = 1;
     else {
       norm = simCounts.overflowCount;
       for (const auto& v: simCounts.count)
-	for (int c: v)
+	for (auto c: v)
 	  norm += c;
     }
     for (int i = 0; i <= config.maxGapLen; ++i)

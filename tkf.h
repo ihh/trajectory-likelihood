@@ -29,6 +29,7 @@ namespace TrajectoryLikelihood {
   struct PRANK {
     int verbose;
     double epsilon, gamma, delta;
+    static constexpr double maxDelta = .49999;
     PRANK (const IndelParams&, double t, int verbose);
     vector<vector<double> > chopZoneLikelihoods (int maxLen) const;
   };
@@ -36,6 +37,7 @@ namespace TrajectoryLikelihood {
   struct RS07 {
     int verbose;
     double epsilon, delta;
+    static constexpr double maxDelta = .49999;
     RS07 (const IndelParams&, double t, int verbose);
     vector<vector<double> > chopZoneLikelihoods (int maxLen) const;
   };
