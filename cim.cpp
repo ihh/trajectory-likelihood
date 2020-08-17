@@ -8,7 +8,7 @@ namespace TrajectoryLikelihood {
 
   CumulativeIndelModel::CumulativeIndelModel (const IndelParams& params, double tMax, double dt, int verbose) :
     params (params),
-    ri (params.totalRightwardDeletionRatePerSite()),
+    ri (params.totalInsertionRatePerSite()),
     rd (params.totalRightwardDeletionRatePerSite()),
     gi (params.gamma * params.rIns),
     gd (params.rDel),
@@ -17,9 +17,6 @@ namespace TrajectoryLikelihood {
     tMax (tMax),
     verbose (verbose)
   {
-    if (params.gamma != 1)
-      throw runtime_error ("must have gamma=1 for moment-based approach");
-
     if (verbose > 1)
       cerr << "Cumulative indel method: ri=" << ri << " gi=" << gi << endl;
 
