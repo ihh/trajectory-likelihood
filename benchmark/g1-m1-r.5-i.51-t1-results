@@ -1,0 +1,112 @@
+P0 g1-m1-r.5-i.51-t1-sim 0.376354
+Ei g1-m1-r.5-i.51-t1-sim 1.8339927313886446
+Ed g1-m1-r.5-i.51-t1-sim 1.723133024737044
+Vi g1-m1-r.5-i.51-t1-sim 12.540985838619537
+Vd g1-m1-r.5-i.51-t1-sim 11.039104471960787
+Cid g1-m1-r.5-i.51-t1-sim 3.1386799418149387
+P0 g1-m1-r.5-i.51-t1-moments 0.376063
+Ei g1-m1-r.5-i.51-t1-moments 1.8327072798337491
+Ed g1-m1-r.5-i.51-t1-moments 1.7182816737697988
+Vi g1-m1-r.5-i.51-t1-moments 9.811226202493073
+Vd g1-m1-r.5-i.51-t1-moments 8.836185416712604
+Cid g1-m1-r.5-i.51-t1-moments 2.6785849738824794
+P0 g1-m1-r.5-i.51-t1-traj 0.376187
+Ei g1-m1-r.5-i.51-t1-traj 0.6308089991422975
+Ed g1-m1-r.5-i.51-t1-traj 0.6092206183113161
+Vi g1-m1-r.5-i.51-t1-traj 1.7673831954288097
+Vd g1-m1-r.5-i.51-t1-traj 1.665217650159349
+Cid g1-m1-r.5-i.51-t1-traj -0.09804633810286251
+P0 g1-m1-r.5-i.51-t1-cim 0.374247
+Ei g1-m1-r.5-i.51-t1-cim 1.8327072666543778
+Ed g1-m1-r.5-i.51-t1-cim 1.7182815890297463
+Vi g1-m1-r.5-i.51-t1-cim 9.979717120863565
+Vd g1-m1-r.5-i.51-t1-cim 8.87351288799106
+Cid g1-m1-r.5-i.51-t1-cim 0.9782105929299472
+P0 g1-m1-r.5-i.51-t1-tkf91 0.18394
+Ei g1-m1-r.5-i.51-t1-tkf91 1.7182813764011906
+Ed g1-m1-r.5-i.51-t1-tkf91 1.718281376401191
+Vi g1-m1-r.5-i.51-t1-tkf91 4.670773124047063
+Vd g1-m1-r.5-i.51-t1-tkf91 4.670773124047063
+Cid g1-m1-r.5-i.51-t1-tkf91 1.952492196044184
+P0 g1-m1-r.5-i.51-t1-tkf92 0.59197
+Ei g1-m1-r.5-i.51-t1-tkf92 1.7182815004489884
+Ed g1-m1-r.5-i.51-t1-tkf92 1.7182815004489884
+Vi g1-m1-r.5-i.51-t1-tkf92 14.012319753332285
+Vd g1-m1-r.5-i.51-t1-tkf92 14.012319753332278
+Cid g1-m1-r.5-i.51-t1-tkf92 6.85747606562539
+P0 g1-m1-r.5-i.51-t1-rs07 0.609923
+Ei g1-m1-r.5-i.51-t1-rs07 2.6614892207961653
+Ed g1-m1-r.5-i.51-t1-rs07 0.8871631295079545
+Vi g1-m1-r.5-i.51-t1-rs07 29.235057011819656
+Vd g1-m1-r.5-i.51-t1-rs07 3.2483395287984984
+Cid g1-m1-r.5-i.51-t1-rs07 7.97069252547786
+P0 g1-m1-r.5-i.51-t1-prank 0.50001
+Ei g1-m1-r.5-i.51-t1-prank 6.527520934767447
+Ed g1-m1-r.5-i.51-t1-prank 2.184504957522536
+Vi g1-m1-r.5-i.51-t1-prank 4306.403595947019
+Vd g1-m1-r.5-i.51-t1-prank 484.24230205233494
+Cid g1-m1-r.5-i.51-t1-prank 1439.7242718290206
+S g1-m1-r.5-i.51-t1-sim 4.7469653014497
+S g1-m1-r.5-i.51-t1-moments 4.784180408382723
+S g1-m1-r.5-i.51-t1-traj 2.955672673648608
+S g1-m1-r.5-i.51-t1-cim 4.801662826281536
+S g1-m1-r.5-i.51-t1-tkf91 5.042750548628987
+S g1-m1-r.5-i.51-t1-tkf92 3.901415787012749
+S g1-m1-r.5-i.51-t1-rs07 3.5592310852544435
+S g1-m1-r.5-i.51-t1-prank 0.3057761715823475
+D g1-m1-r.5-i.51-t1-sim g1-m1-r.5-i.51-t1-moments 0.026617395336844384
+D g1-m1-r.5-i.51-t1-sim g1-m1-r.5-i.51-t1-traj 0.9737390251423914
+D g1-m1-r.5-i.51-t1-sim g1-m1-r.5-i.51-t1-cim 0.04991185994268373
+D g1-m1-r.5-i.51-t1-sim g1-m1-r.5-i.51-t1-tkf91 0.4979247576312131
+D g1-m1-r.5-i.51-t1-sim g1-m1-r.5-i.51-t1-tkf92 0.23750367302362252
+D g1-m1-r.5-i.51-t1-sim g1-m1-r.5-i.51-t1-rs07 1.6069495723006324
+D g1-m1-r.5-i.51-t1-sim g1-m1-r.5-i.51-t1-prank 8.222358376178988
+D g1-m1-r.5-i.51-t1-moments g1-m1-r.5-i.51-t1-sim Infinity
+D g1-m1-r.5-i.51-t1-moments g1-m1-r.5-i.51-t1-traj 0.9797754209593252
+D g1-m1-r.5-i.51-t1-moments g1-m1-r.5-i.51-t1-cim 0.022110916776310933
+D g1-m1-r.5-i.51-t1-moments g1-m1-r.5-i.51-t1-tkf91 0.4364590553884557
+D g1-m1-r.5-i.51-t1-moments g1-m1-r.5-i.51-t1-tkf92 0.2109184073834648
+D g1-m1-r.5-i.51-t1-moments g1-m1-r.5-i.51-t1-rs07 Infinity
+D g1-m1-r.5-i.51-t1-moments g1-m1-r.5-i.51-t1-prank Infinity
+D g1-m1-r.5-i.51-t1-traj g1-m1-r.5-i.51-t1-sim Infinity
+D g1-m1-r.5-i.51-t1-traj g1-m1-r.5-i.51-t1-moments 0.3094906246230725
+D g1-m1-r.5-i.51-t1-traj g1-m1-r.5-i.51-t1-cim 0.3439356737061259
+D g1-m1-r.5-i.51-t1-traj g1-m1-r.5-i.51-t1-tkf91 0.6543124272891526
+D g1-m1-r.5-i.51-t1-traj g1-m1-r.5-i.51-t1-tkf92 0.4918668697123756
+D g1-m1-r.5-i.51-t1-traj g1-m1-r.5-i.51-t1-rs07 0.9935168537591813
+D g1-m1-r.5-i.51-t1-traj g1-m1-r.5-i.51-t1-prank 6.3731911233288345
+D g1-m1-r.5-i.51-t1-cim g1-m1-r.5-i.51-t1-sim Infinity
+D g1-m1-r.5-i.51-t1-cim g1-m1-r.5-i.51-t1-moments 0.022010947764593065
+D g1-m1-r.5-i.51-t1-cim g1-m1-r.5-i.51-t1-traj 0.874860708968801
+D g1-m1-r.5-i.51-t1-cim g1-m1-r.5-i.51-t1-tkf91 0.5680244752873482
+D g1-m1-r.5-i.51-t1-cim g1-m1-r.5-i.51-t1-tkf92 0.23723126252881244
+D g1-m1-r.5-i.51-t1-cim g1-m1-r.5-i.51-t1-rs07 Infinity
+D g1-m1-r.5-i.51-t1-cim g1-m1-r.5-i.51-t1-prank Infinity
+D g1-m1-r.5-i.51-t1-tkf91 g1-m1-r.5-i.51-t1-sim Infinity
+D g1-m1-r.5-i.51-t1-tkf91 g1-m1-r.5-i.51-t1-moments 0.39428081293443873
+D g1-m1-r.5-i.51-t1-tkf91 g1-m1-r.5-i.51-t1-traj 1.1731056423623014
+D g1-m1-r.5-i.51-t1-tkf91 g1-m1-r.5-i.51-t1-cim 0.436519743718811
+D g1-m1-r.5-i.51-t1-tkf91 g1-m1-r.5-i.51-t1-tkf92 0.9647497493843952
+D g1-m1-r.5-i.51-t1-tkf91 g1-m1-r.5-i.51-t1-rs07 Infinity
+D g1-m1-r.5-i.51-t1-tkf91 g1-m1-r.5-i.51-t1-prank Infinity
+D g1-m1-r.5-i.51-t1-tkf92 g1-m1-r.5-i.51-t1-sim Infinity
+D g1-m1-r.5-i.51-t1-tkf92 g1-m1-r.5-i.51-t1-moments 0.20100442187726925
+D g1-m1-r.5-i.51-t1-tkf92 g1-m1-r.5-i.51-t1-traj 1.4386492778757423
+D g1-m1-r.5-i.51-t1-tkf92 g1-m1-r.5-i.51-t1-cim 0.25271544025635595
+D g1-m1-r.5-i.51-t1-tkf92 g1-m1-r.5-i.51-t1-tkf91 0.9876113476001066
+D g1-m1-r.5-i.51-t1-tkf92 g1-m1-r.5-i.51-t1-rs07 Infinity
+D g1-m1-r.5-i.51-t1-tkf92 g1-m1-r.5-i.51-t1-prank Infinity
+D g1-m1-r.5-i.51-t1-rs07 g1-m1-r.5-i.51-t1-sim Infinity
+D g1-m1-r.5-i.51-t1-rs07 g1-m1-r.5-i.51-t1-moments 0.6002326032119414
+D g1-m1-r.5-i.51-t1-rs07 g1-m1-r.5-i.51-t1-traj 1.883907815567063
+D g1-m1-r.5-i.51-t1-rs07 g1-m1-r.5-i.51-t1-cim 0.6545939659564958
+D g1-m1-r.5-i.51-t1-rs07 g1-m1-r.5-i.51-t1-tkf91 1.3424983952818283
+D g1-m1-r.5-i.51-t1-rs07 g1-m1-r.5-i.51-t1-tkf92 0.36551976528789915
+D g1-m1-r.5-i.51-t1-rs07 g1-m1-r.5-i.51-t1-prank 3.7705987949809194
+D g1-m1-r.5-i.51-t1-prank g1-m1-r.5-i.51-t1-sim Infinity
+D g1-m1-r.5-i.51-t1-prank g1-m1-r.5-i.51-t1-moments 3.895144634164705
+D g1-m1-r.5-i.51-t1-prank g1-m1-r.5-i.51-t1-traj 0.9688396337870414
+D g1-m1-r.5-i.51-t1-prank g1-m1-r.5-i.51-t1-cim 4.688123635642669
+D g1-m1-r.5-i.51-t1-prank g1-m1-r.5-i.51-t1-tkf91 6.554605673356782
+D g1-m1-r.5-i.51-t1-prank g1-m1-r.5-i.51-t1-tkf92 2.4874732156565242
+D g1-m1-r.5-i.51-t1-prank g1-m1-r.5-i.51-t1-rs07 Infinity

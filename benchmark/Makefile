@@ -16,7 +16,8 @@ stats: scan-gammas
 
 #scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine
 #scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine g.99-m1-r.5-t.25-scan-rins-fine
-scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine
+#scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine g1-m1-r.5-t1-scan-rins-fine
+scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t1-scan-rins-fine
 
 $(PREFIX)-scan-mu: $(PREFIX)-m.05-scan-rdel $(PREFIX)-m.5-scan-rdel
 
@@ -42,17 +43,17 @@ $(PREFIX)-results: $(PREFIX)-sim $(PREFIX)-moments $(PREFIX)-traj $(PREFIX)-cim 
 	$(RELENT) --normalize $^ >$@
 
 g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 0.0625 }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 100000000 --initlen 1000 --maxlen 100 >$@) >&$@.log
-	grep -v "Beginning simulation trial" $@.log >$@.log.short
-	rm $@.log
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 0.0625, Tn =< 0.1 }
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 10000000 --initlen 1000 --maxlen 100 >$@) >&$@.log
 	grep -v "Beginning simulation trial" $@.log >$@.log.short
 	rm $@.log
 
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 0.1, Tn < 1 }
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 0.0625, Tn =< 0.1 }
 	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 1000000 --initlen 1000 --maxlen 100 >$@) >&$@.log
+	grep -v "Beginning simulation trial" $@.log >$@.log.short
+	rm $@.log
+
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 0.1, Tn < 1 }
+	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 100000 --initlen 1000 --maxlen 100 >$@) >&$@.log
 	grep -v "Beginning simulation trial" $@.log >$@.log.short
 	rm $@.log
 
