@@ -17,7 +17,7 @@ stats: scan-gammas
 #scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine
 #scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine g.99-m1-r.5-t.25-scan-rins-fine
 #scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine g1-m1-r.5-t1-scan-rins-fine
-scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g1-m4-r.5-t.5-scan-rins-fine g1-m2-r.5-t1-scan-rins-fine
+scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g1-m4-r.5-t.5-scan-rins-fine g1-m2-r.5-t1-scan-rins-fine g1-m2-r.5-t.5-scan-rdel-fine g1-m2-t.5-scan-len-fine
 
 $(PREFIX)-scan-mu: $(PREFIX)-m.05-scan-rdel $(PREFIX)-m.5-scan-rdel
 
@@ -38,6 +38,20 @@ $(PREFIX)-scan-time-fine: $(addprefix $(PREFIX)-t,$(addsuffix -results,$(TIME_RA
 RINS_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/200,40*2..60*2));print"@m"')
 
 g$(G)-m$(M)-r$(R)-t$(T)-scan-rins-fine: $(addprefix g$(G)-m$(M)-r$(R)-i,$(addsuffix -t$(T)-results,$(RINS_RANGE)))
+
+RDEL_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,40..60));print"@m"')
+
+g$(G)-m$(M)-r$(R)-t$(T)-scan-rdel-fine: $(addprefix g$(G)-m$(M)-r,$(addsuffix -t$(T)-adjust-mu-sym,$(RDEL_RANGE)))
+
+g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-adjust-mu { atom_concat('0',R,Rz), atom_number(Rz,Rn), atom_concat('0',M,Mz), atom_number(Mz,Mn), Madj is Mn / (1 - Rn) }: g$(G)-m$(Madj)-r$(R)-i$(I)-t$(T)-results
+
+g$(G)-m$(M)-r$(R)-t$(T)-adjust-mu-sym: g$(G)-m$(M)-r$(R)-i$(R)-t$(T)-adjust-mu
+
+LEN_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/10,10..40));print"@m"')
+
+g$(G)-m$(M)-t$(T)-scan-len-fine: $(addprefix g$(G)-m$(M)-l,$(addsuffix -t$(T)-set-r,$(LEN_RANGE)))
+
+g$(G)-m$(M)-l$(L)-t$(T)-set-r { atom_number(L,Ln), R is 1 - (1 / Ln) }: g$(G)-m$(M)-r$(R)-i$(R)-t$(T)-adjust-mu
 
 $(PREFIX)-results: $(PREFIX)-sim $(PREFIX)-moments $(PREFIX)-traj $(PREFIX)-cim $(PREFIX)-tkf91 $(PREFIX)-tkf92 $(PREFIX)-rs07 $(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
