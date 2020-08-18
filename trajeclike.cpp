@@ -56,7 +56,7 @@ int main (int argc, char** argv) {
     const double rDel = vm.at("y").as<double>();
     const double rIns = vm.count("x") ? vm.at("x").as<double>() : (vm.at("xyratio").as<double>() * rDel);
     const double mu = vm.at("mu").as<double>() / (ggi ? (1. - rDel) : 1.);
-    const double gamma = (vm.count("lambda") ? (vm.at("gamma").as<double>() * vm.at("mu").as<double>()) : vm.at("gamma").as<double>()) * (ggi ? ((1 - rIns) / (1 - rDel)) : 1.);
+    const double gamma = (vm.count("lambda") ? (vm.at("lambda").as<double>() / vm.at("mu").as<double>()) : vm.at("gamma").as<double>()) * (ggi ? ((1 - rIns) / (1 - rDel)) : 1.);
     const IndelParams params (gamma, mu, rDel, rIns);
     const double t = vm.at("time").as<double>();
 
