@@ -36,7 +36,7 @@ t$(T)-scan-gaplen: $(addprefix gaplen,$(addsuffix -t$(T)-set-xy,$(GAPLEN_RANGE))
 gaplen$(L)-t$(T)-set-xy { atom_number(L,Ln), Y is 1 - (1 / Ln) }: l1-m1-x$(Y)-y$(Y)-t$(T)-set-seqlen
 	echo $^
 
-l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-set-seqlen { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn => 1 -> Trials = 100, InitLen = 100000, MaxGap = 1000; InitLen = 1000, MaxGap = 100, (Tn => 0.0625 -> Trials = 100000; (Tn => 0.03125 -> Trials = 1000000; (Trials = 10000000)))) }: l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(MaxGap)-s$(InitLen)-n$(Trials)-results
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-set-seqlen { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn >= 1 -> Trials = 100, InitLen = 100000, MaxGap = 1000; InitLen = 1000, MaxGap = 100, (Tn >= 0.0625 -> Trials = 100000; (Tn >= 0.03125 -> Trials = 1000000; (Trials = 10000000)))) }: l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(MaxGap)-s$(InitLen)-n$(Trials)-results
 
 l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-s$(S)-n$(N)-results: l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-s$(S)-n$(N)-sim l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-methods
 	$(RELENT) --normalize $^ >$@
