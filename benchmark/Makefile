@@ -17,7 +17,7 @@ stats: scan-gammas
 #scan-gammas: g1-scan-mu g.99-scan-mu g.9-scan-mu g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine
 #scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine g.99-m1-r.5-t.25-scan-rins-fine
 #scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g.8-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.25-scan-rins-fine g1-m1-r.5-t1-scan-rins-fine
-scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t1-scan-rins-fine
+scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g1-m4-r.5-t.5-scan-rins-fine
 
 $(PREFIX)-scan-mu: $(PREFIX)-m.05-scan-rdel $(PREFIX)-m.5-scan-rdel
 
@@ -35,7 +35,7 @@ TIME_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map(2**($$_/8),-48..24));pr
 
 $(PREFIX)-scan-time-fine: $(addprefix $(PREFIX)-t,$(addsuffix -results,$(TIME_RANGE)))
 
-RINS_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,20..80));print"@m"')
+RINS_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/200,40*2..60*2));print"@m"')
 
 g$(G)-m$(M)-r$(R)-t$(T)-scan-rins-fine: $(addprefix g$(G)-m$(M)-r$(R)-i,$(addsuffix -t$(T)-results,$(RINS_RANGE)))
 
