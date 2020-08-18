@@ -16,20 +16,23 @@ int main (int argc, char** argv) {
   opts.add_options()
     ("help,h", "display this help message")
     ("verbose,v", po::value<int>()->default_value(0), "logging verbosity")
-    ("gamma", po::value<double>()->default_value(.99), "gamma parameter from MLH 2004 (parameter of equilibrium geometric distribution over sequence lengths)")
-    ("mu", po::value<double>()->default_value(.049), "mu parameter from MLH 2004 (rightward deletion rate)")
-    ("r,r", po::value<double>()->default_value(.543), "r parameter from MLH 2004 (deletion extension probability, i.e. parameter of geometric distribution over deletion lengths)")
-    ("rins,I", po::value<double>(), "(1/gamma) * parameter of geometric distribution over insertion lengths (insertion extension probability; default is same as deletion parameter)")
+    ("lambda,L", po::value<double>()->default_value(.99), "insertion rate")
+    ("mu,M", po::value<double>()->default_value(.049), "deletion rate")
+    ("x,X", po::value<double>(), "insertion extension probability")
+    ("y,Y", po::value<double>()->default_value(.543), "deletion extension probability")
+    ("gamma,G", po::value<double>()->default_value(.99), "ratio of lambda/mu")
+    ("xyratio,R", po::value<double>()->default_value(1), "ratio of x/y")
     ("time,t", po::value<double>()->default_value(1), "time parameter")
+    ("ggi,g", "use General Geometric Indel rate scaling (De Maio 2020) instead of Long Indel (Miklos et al 2004): lambda_GGI=lambda_LI*(1-x), mu_GGI=mu_LI*(1-y)")
     ("maxevents,E", po::value<int>()->default_value(3), "max # of indel events in trajectory")
-    ("maxlen,L", po::value<int>()->default_value(10), "max length of chop zone")
+    ("maxlen,l", po::value<int>()->default_value(10), "max length of chop zone")
     ("benchmark,b", "perform time benchmark instead of likelihood calculation")
     ("simulate,s", "perform stochastic simulation instead of likelihood calculation")
     ("counts,c", "report simulation counts instead of probabilities")
     ("initlen,i", po::value<int>()->default_value(1000), "initial sequence length for simulation")
     ("trials,n", po::value<int>()->default_value(100000), "number of simulation trials")
     ("moments,m", "use method of moments (Holmes 2020) for likelihood calculations")
-    ("cim,C", "use de Maio's Cumulative Indel Model for likelihood calculations")
+    ("cim,C", "use De Maio 2020 Cumulative Indel Model for likelihood calculations")
     ("tkf91", "use TKF91 Pair HMM for likelihood calculations")
     ("tkf92", "use TKF92 Pair HMM for likelihood calculations")
     ("rs07", "use RS07 Pair HMM for likelihood calculations")
@@ -48,10 +51,13 @@ int main (int argc, char** argv) {
       return EXIT_SUCCESS;
     }
 
-    const double gamma = vm.at("gamma").as<double>();
-    const double mu = vm.at("mu").as<double>();
-    const double rDel = vm.at("r").as<double>();
-    const IndelParams params (gamma, mu, rDel, vm.count("rins") ? vm.at("rins").as<double>() : rDel);
+    // convert params to Long Indel
+    const bool ggi = vm.count("ggi");
+    const double rDel = vm.at("y").as<double>();
+    const double rIns = vm.count("x") ? vm.at("x").as<double>() : (vm.at("xyratio").as<double>() * rDel);
+    const double mu = vm.at("mu").as<double>() / (ggi ? (1. - rDel) : 1.);
+    const double gamma = (vm.count("lambda") ? (vm.at("gamma").as<double>() * vm.at("mu").as<double>()) : vm.at("gamma").as<double>()) * (ggi ? ((1 - rIns) / (1 - rDel)) : 1.);
+    const IndelParams params (gamma, mu, rDel, rIns);
     const double t = vm.at("time").as<double>();
 
     const int verbose = vm.at("verbose").as<int>();

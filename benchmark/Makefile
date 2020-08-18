@@ -9,101 +9,69 @@ times:
 
 # Transform (gamma,mu,rins/gamma,rdel) of trajeclike into (lambda,mu,x,y) of general indel model
 relents: scan-gammas
-	cat *results | perl -e 'print"gamma lambda mu rdel rins t method D reversible\n";while(<>){@m=/^D g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-sim \S+-(\S+) (\S+)/;if(@m){push@m,($$m[3]==$$m[2]?"yes":"no");$$m[3]*=$$m[0];$$m[1]*=1-$$m[2];unshift@m,$$m[0]*$$m[1]*(1-$$m[2])/(1-$$m[3]);@m[0,1]=@m[1,0];print"@m\n"}}' >$@
+	cat *results | perl -e 'print"lambda mu x y t maxgap seqlen n method D reversible\n";while(<>){@m=/^D l(\S+)-m(\S+)-x(\S+)-y(\S+)-t(\S+)-g(\S+)-s(\S+)-n(\S+)-sim \S+-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
 
 stats: scan-gammas
-	cat *results | perl -e 'print"stat gamma lambda mu rdel rins t method value reversible\n";while(<>){@m=/^([^D]\S*) g(\S+)-m(\S+)-r(\S+)-i(\S+)-t(\S+)-(\S+) (\S+)/;if(@m){push@m,($$m[4]==$$m[3]?"yes":"no");$$m[4]*=$$m[1];$$m[2]*=1-$$m[3];unshift@m,$$m[1]*$$m[2]*(1-$$m[3])/(1-$$m[4]);@m[0..2]=@m[1,2,0];print"@m\n"}}' >$@
+	cat *results | perl -e 'print"stat lambda mu x y t maxgap seqlen n method value reversible\n";while(<>){@m=/^([^D]\S*) l(\S+)-m(\S+)-x(\S+)-y(\S+)-t(\S+)-g(\S+)-s(\S+)-n(\S+)-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
 
-#scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t1-scan-rins-fine m1-i.5-t.5-scan-rdel-fine m1-t.5-scan-len-fine
-scan-gammas: g1-m.5-r.5-i.5-scan-time-fine g1-m1-r.5-t.5-scan-rins-fine m1-i.5-t.5-scan-rdel-fine m1-t.5-scan-len-fine
-
-$(PREFIX)-scan-mu: $(PREFIX)-m.05-scan-rdel $(PREFIX)-m.5-scan-rdel
-
-$(PREFIX)-scan-rdel: $(PREFIX)-r.5-scan-rins $(PREFIX)-r.75-scan-rins $(PREFIX)-r.9-scan-rins
-
-$(PREFIX)-r$(R)-scan-rins: $(PREFIX)-r$(R)-i$(R)-scan-time $(PREFIX)-r$(R)-i.45-scan-time $(PREFIX)-r$(R)-i.8-scan-time-short $(PREFIX)-r$(R)-i.95-scan-time-tiny
-
-$(PREFIX)-scan-time: $(PREFIX)-scan-time-short $(PREFIX)-t1-results $(PREFIX)-t2-results $(PREFIX)-t4-results $(PREFIX)-t8-results
-
-$(PREFIX)-scan-time-short: $(PREFIX)-scan-time-tiny $(PREFIX)-t.125-results $(PREFIX)-t.25-results $(PREFIX)-t.5-results
-
-$(PREFIX)-scan-time-tiny: $(PREFIX)-t.015625-results $(PREFIX)-t.03125-results $(PREFIX)-t.0625-results
+scan-gammas: x.5-y.5-scan-t y.5-t.5-scan-x x.5-t.5-scan-y t.5-scan-gaplen
 
 TIME_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map(2**($$_/8),-48..24));print"@m"')
+X_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,40..60));print"@m"')
+Y_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,40..60));print"@m"')
+GAPLEN_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/10,10..40));print"@m"')
 
-$(PREFIX)-scan-time-fine: $(addprefix $(PREFIX)-t,$(addsuffix -results,$(TIME_RANGE)))
+x$(X)-y$(Y)-scan-t: $(addprefix l1-m1-x$(X)-y$(Y)-t,$(addsuffix -set-seqlen,$(TIME_RANGE)))
+	echo $^
 
-RINS_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,40..60));print"@m"')
+y$(Y)-t$(T)-scan-x: $(addprefix l1-m1-x,$(addsuffix -y$(Y)-t$(T)-set-seqlen,$(X_RANGE)))
+	echo $^
 
-g$(G)-m$(M)-r$(R)-t$(T)-scan-rins-fine: $(addprefix g$(G)-m$(M)-r$(R)-i,$(addsuffix -t$(T)-results,$(RINS_RANGE)))
+x$(X)-t$(T)-scan-y: $(addprefix l1-m1-x$(X)-y,$(addsuffix -t$(T)-set-seqlen,$(Y_RANGE)))
+	echo $^
 
-RDEL_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,40..60));print"@m"')
+t$(T)-scan-gaplen: $(addprefix gaplen,$(addsuffix -t$(T)-set-xy,$(GAPLEN_RANGE)))
+	echo $^
 
-m$(M)-i$(I)-t$(T)-scan-rdel-fine: $(addprefix m$(M)-r,$(addsuffix -i$(I)-t$(T)-set-mu-gamma,$(RDEL_RANGE)))
+gaplen$(L)-t$(T)-set-xy { atom_number(L,Ln), Y is 1 - (1 / Ln) }: l1-m1-x$(Y)-y$(Y)-t$(T)-set-seqlen
+	echo $^
 
-m$(M)-r$(R)-i$(I)-t$(T)-set-mu-gamma { atom_concat('0',M,Mz), atom_number(Mz,Mn), atom_concat('0',R,Rz), atom_number(Rz,Rn), atom_concat('0',I,Iz), atom_number(Iz,In), Madj is Mn / (1 - Rn), Gadj is (1 - Rn) / (1 - In) }: g$(Gadj)-m$(Madj)-r$(R)-i$(I)-t$(T)-results
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-set-seqlen { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn > 1 -> Trials = 100, InitLen = 100000, MaxGap = 1000; InitLen = 1000, MaxGap = 100, (Tn > 0.1 -> Trials = 100000; (Tn > 0.0625 -> Trials = 1000000; (Trials = 10000000)))) }: l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(MaxGap)-s$(InitLen)-n$(Trials)-results
 
-LEN_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/10,10..40));print"@m"')
-
-m$(M)-t$(T)-scan-len-fine: $(addprefix m$(M)-l,$(addsuffix -t$(T)-set-r,$(LEN_RANGE)))
-
-m$(M)-l$(L)-t$(T)-set-r { atom_number(L,Ln), R is 1 - (1 / Ln) }: m$(M)-r$(R)-i$(R)-t$(T)-set-mu-gamma
-
-$(PREFIX)-results: $(PREFIX)-sim $(PREFIX)-moments $(PREFIX)-traj $(PREFIX)-cim $(PREFIX)-tkf91 $(PREFIX)-tkf92 $(PREFIX)-rs07 $(PREFIX)-prank
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-s$(S)-n$(N)-results: l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-s$(S)-n$(N)-sim l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-methods
 	$(RELENT) --normalize $^ >$@
 
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 0.0625 }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 10000000 --initlen 1000 --maxlen 100 >$@) >&$@.log
+$(PREFIX)-methods: $(PREFIX)-moments $(PREFIX)-traj $(PREFIX)-cim $(PREFIX)-tkf91 $(PREFIX)-tkf92 $(PREFIX)-rs07 $(PREFIX)-prank
+
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-s$(S)-n$(N)-sim:
+	(time $(TL) --ggi --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --seedtime --simulate --trials $(N) --initlen $(S) >$@) >&$@.log
 	grep -v "Beginning simulation trial" $@.log >$@.log.short
 	rm $@.log
 
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 0.0625, Tn =< 0.1 }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 1000000 --initlen 1000 --maxlen 100 >$@) >&$@.log
-	grep -v "Beginning simulation trial" $@.log >$@.log.short
-	rm $@.log
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 0.1, Tn < 1 }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 100000 --initlen 1000 --maxlen 100 >$@) >&$@.log
-	grep -v "Beginning simulation trial" $@.log >$@.log.short
-	rm $@.log
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-sim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn >= 1 }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --seedtime --simulate --trials 100 --initlen 100000 --maxlen 1000 >$@) >&$@.log
-	grep -v "Beginning simulation trial" $@.log >$@.log.short
-	rm $@.log
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-traj:
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --maxlen 30 >$@) >&$@.log
+# Override gaplen for trajectory method, which is sloooow
+MAX_TRAJ_GAPLEN = 30
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-traj:
+	(time $(TL) --ggi --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(MAX_TRAJ_GAPLEN) >$@) >&$@.log
 	grep -v "Likelihood for" $@.log >$@.log.short
 	rm $@.log
 
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-cim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn > 0.1 -> DT = 0.0001; DT = 0.00001) }
+	(time $(TL) --ggi --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --cim --dt $(DT) >$@) >&$@.log
 
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-cim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 0.1 }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --cim --maxlen 100 --dt .00001 >$@) >&$@.log
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-moments: { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn > 0.1 -> DT = 0.0001; DT = 0.00001) }
+	(time $(TL) --ggi --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --moments --dt $(DT) >$@) >&$@.log
 
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-cim: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 0.1, (Tn < 1 -> MaxLen = 100; MaxLen = 1000) }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --cim --maxlen $(MaxLen) --dt .0001 >$@) >&$@.log
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-tkf91:
+	(time $(TL) --ggi --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --tkf91 >$@) >&$@.log
 
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-tkf92:
+	(time $(TL) --ggi --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --tkf92 >$@) >&$@.log
 
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-moments: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn =< 0.1 }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --moments --maxlen 100 --dt .00001 >$@) >&$@.log
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-rs07:
+	(time $(TL) --ggi --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --rs07 >$@) >&$@.log
 
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-moments: { atom_concat('0',T,Tz), atom_number(Tz,Tn), Tn > 0.1, (Tn < 1 -> MaxLen = 100; MaxLen = 1000) }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --moments --maxlen $(MaxLen) --dt .0001 >$@) >&$@.log
-
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-tkf91: { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn < 1 -> MaxLen = 100; MaxLen = 1000) }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --tkf91 --maxlen $(MaxLen) >$@) >&$@.log
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-tkf92: { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn < 1 -> MaxLen = 100; MaxLen = 1000) }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --tkf92 --maxlen $(MaxLen) >$@) >&$@.log
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-rs07: { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn < 1 -> MaxLen = 100; MaxLen = 1000) }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --rs07 --maxlen $(MaxLen) >$@) >&$@.log
-
-g$(G)-m$(M)-r$(R)-i$(I)-t$(T)-prank: { atom_concat('0',T,Tz), atom_number(Tz,Tn), (Tn < 1 -> MaxLen = 100; MaxLen = 1000) }
-	(time $(TL) --gamma $(G) --mu $(M) --r $(R) --rins $(I) --time $(T) --prank --maxlen $(MaxLen) >$@) >&$@.log
-
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-prank:
+	(time $(TL) --ggi --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --prank >$@) >&$@.log
 
 shorten-logs: $(addsuffix .short,$(wildcard *-traj.log) $(wildcard *-sim.log))
 

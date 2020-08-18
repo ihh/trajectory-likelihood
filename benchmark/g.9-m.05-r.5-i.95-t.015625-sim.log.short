@@ -1,8 +1,0 @@
-Random number seed: 1593375603798
-Entry in row i, column j is probability of inserting i residues and deleting j residues before the next match
-Total: 1
-E[#ins]=0.00831595 E[#del]=0.000780671 E[#ins^2]=0.107544 E[#del^2]=0.00234309 V[#ins]=0.107475 V[#del]=0.00234249 E[#ins*#del]=1.65295e-05 Cov(#ins,#del)=1.00374e-05
-
-real	0m1.460s
-user	0m0.635s
-sys	0m0.809s
