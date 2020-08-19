@@ -16,14 +16,11 @@ int main (int argc, char** argv) {
   opts.add_options()
     ("help,h", "display this help message")
     ("verbose,v", po::value<int>()->default_value(0), "logging verbosity")
-    ("lambda,L", po::value<double>()->default_value(.99), "insertion rate")
+    ("lambda,L", po::value<double>(), "insertion rate (default is same as mu)")
     ("mu,M", po::value<double>()->default_value(.049), "deletion rate")
-    ("x,X", po::value<double>(), "insertion extension probability")
+    ("x,X", po::value<double>(), "insertion extension probability (default is same as y)")
     ("y,Y", po::value<double>()->default_value(.543), "deletion extension probability")
-    ("gamma,G", po::value<double>()->default_value(.99), "ratio of lambda/mu")
-    ("xyratio,R", po::value<double>()->default_value(1), "ratio of x/y")
     ("time,t", po::value<double>()->default_value(1), "time parameter")
-    ("ggi,g", "use General Geometric Indel rate scaling (De Maio 2020) instead of Long Indel (Miklos et al 2004): lambda_GGI=lambda_LI*(1-x), mu_GGI=mu_LI*(1-y)")
     ("maxevents,E", po::value<int>()->default_value(3), "max # of indel events in trajectory")
     ("maxlen,l", po::value<int>()->default_value(10), "max length of chop zone")
     ("benchmark,b", "perform time benchmark instead of likelihood calculation")
@@ -51,16 +48,27 @@ int main (int argc, char** argv) {
       return EXIT_SUCCESS;
     }
 
-    // convert params to Long Indel
-    const bool ggi = vm.count("ggi");
-    const double rDel = vm.at("y").as<double>();
-    const double rIns = vm.count("x") ? vm.at("x").as<double>() : (vm.at("xyratio").as<double>() * rDel);
-    const double mu = vm.at("mu").as<double>() / (ggi ? (1. - rDel) : 1.);
-    const double gamma = (vm.count("lambda") ? (vm.at("lambda").as<double>() / vm.at("mu").as<double>()) : vm.at("gamma").as<double>()) * (ggi ? ((1 - rIns) / (1 - rDel)) : 1.);
-    const IndelParams params (gamma, mu, rDel, rIns);
-    const double t = vm.at("time").as<double>();
-
+    // logging
     const int verbose = vm.at("verbose").as<int>();
+
+    // get General Geometric Indel Model params (De Maio 2020; Holmes 2020)
+    const double mu_ggi = vm.at("mu").as<double>();
+    const double lambda_ggi = vm.count("lambda") ? vm.at("lambda").as<double>() : mu_ggi;
+    const double rDel = vm.at("y").as<double>();
+    const double rIns = vm.count("x") ? vm.at("x").as<double>() : rDel;
+
+    // convert params to Long Indel Model scaling (Miklos, Lunter & Holmes 2004)
+    const double mu_li = mu_ggi / (1. - rDel);
+    const double gamma_li = (lambda_ggi * (1. - rIns)) / (mu_ggi * (1. - rDel));
+    const IndelParams params (gamma_li, mu_li, rDel, rIns);
+
+    if (verbose) {
+      // log params in GGI format
+      cerr << "mu_GGI=" << params.totalRightwardDeletionRatePerSite() << " lambda_GGI=" << params.totalInsertionRatePerSite() << " x=" << params.rIns << " y=" << params.rDel << endl;
+    }
+
+    // get remaining params
+    const double t = vm.at("time").as<double>();
 
     const bool reportCounts = vm.count("simulate") && vm.count("counts");
     const int maxLen = vm.at("maxlen").as<int>();

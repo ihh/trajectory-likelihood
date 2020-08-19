@@ -15,6 +15,8 @@ namespace TrajectoryLikelihood {
 			       double time);
 
   // Parameters
+  // These parameters are for the Long Indel Model of Miklos, Lunter & Holmes 2004
+  // Comments indicate relationship to General [Geometric] Indel (GGI) Model of De Maio, 2020 & Holmes, 2020
   struct IndelParams {
     double gamma, mu, rDel, rIns;
     IndelParams() : gamma(1), mu(0), rDel(0), rIns(0) { }
@@ -22,8 +24,8 @@ namespace TrajectoryLikelihood {
     IndelParams (double g, double m, double rd, double ri) : gamma(g), mu(m), rDel(rd), rIns(ri) { }
     double insertionRate (int insertedLength) const;
     double rightwardDeletionRate (int deletedLength) const;
-    double totalInsertionRatePerSite() const;
-    double totalRightwardDeletionRatePerSite() const;
+    double totalInsertionRatePerSite() const;  // this is the lambda of the GGI model
+    double totalRightwardDeletionRatePerSite() const;  // this is the mu of the GGI model
   };
   
   // Config for chop zone probability calculations
