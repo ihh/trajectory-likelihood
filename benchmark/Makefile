@@ -1,3 +1,21 @@
+prolog
+set_len(T,Y,Trials,InitLen,MaxGap) :-
+	atom_concat('0',T,Tz),
+	atom_number(Tz,Tn),
+	atom_concat('0',Y,Yz),
+	atom_number(Yz,Yn),
+	((Tn >= 1; Yn > 0.6)
+	 -> Trials = 100,
+	    InitLen = 100000,
+	    MaxGap = 1000;
+	 InitLen = 1000,
+	 MaxGap = 100,
+	 (Tn >= 0.0625
+		  -> Trials = 100000;
+		  (Tn >= 0.03125
+			   -> Trials = 1000000;
+			   Trials = 10000000))).
+endprolog
 
 TL = ../trajeclike -v2
 RELENT = ../relent.js
@@ -16,9 +34,9 @@ stats: scan-gammas
 scan-gammas: x.5-y.5-scan-t y.5-t.5-scan-x x.5-t.5-scan-y t.5-scan-xy
 
 TIME_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map(2**($$_/8),-56..8));print"@m"')
-X_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,30..70));print"@m"')
-Y_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,30..65));print"@m"')
-XY_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/10,0..80));print"@m"')
+X_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..70));print"@m"')
+Y_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..65));print"@m"')
+XY_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..80));print"@m"')
 
 x$(X)-y$(Y)-scan-t: $(addprefix l1-m1-x$(X)-y$(Y)-t,$(addsuffix -set-seqlen,$(TIME_RANGE)))
 	echo $^
@@ -29,13 +47,13 @@ y$(Y)-t$(T)-scan-x: $(addprefix l1-m1-x,$(addsuffix -y$(Y)-t$(T)-set-seqlen,$(X_
 x$(X)-t$(T)-scan-y: $(addprefix l1-m1-x$(X)-y,$(addsuffix -t$(T)-set-seqlen,$(Y_RANGE)))
 	echo $^
 
-t$(T)-scan-xy: $(addprefix x$(X),$(addsuffix -t$(T)-set-y,$(XY_RANGE)))
+t$(T)-scan-xy: $(addprefix x,$(addsuffix -t$(T)-set-y,$(XY_RANGE)))
 	echo $^
 
 x$(X)-t$(T)-set-y: l1-m1-x$(X)-y$(X)-t$(T)-set-seqlen
 	echo $^
 
-l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-set-seqlen { atom_concat('0',T,Tz), atom_number(Tz,Tn), ((Tn >= 1; Y > 0.6) -> Trials = 100, InitLen = 100000, MaxGap = 1000; InitLen = 1000, MaxGap = 100, (Tn >= 0.0625 -> Trials = 100000; (Tn >= 0.03125 -> Trials = 1000000; (Trials = 10000000)))) }: l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(MaxGap)-s$(InitLen)-n$(Trials)-results
+l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-set-seqlen { set_len(T,Y,Trials,InitLen,MaxGap) }: l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(MaxGap)-s$(InitLen)-n$(Trials)-results
 
 $(PREFIX)-s$(S)-n$(N)-results: $(PREFIX)-s$(S)-n$(N)-sim $(PREFIX)-moments $(PREFIX)-traj $(PREFIX)-cim $(PREFIX)-tkf91 $(PREFIX)-tkf92 $(PREFIX)-rs07 $(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
