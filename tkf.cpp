@@ -34,7 +34,7 @@ namespace TrajectoryLikelihood {
 
   TKF92::TKF92 (const IndelParams& params, double t, int verbose) :
     TKF (params, t, verbose),
-    r (params.rDel)
+    r ((params.rDel + params.rIns) / 2)
   { }
 
   vector<vector<double> > TKF92::chopZoneLikelihoods (int maxLen) const {
@@ -47,9 +47,9 @@ namespace TrajectoryLikelihood {
 
   PRANK::PRANK (const IndelParams& params, double t, int verbose) :
     verbose (verbose),
-    epsilon (params.rDel),
+    epsilon ((params.rDel + params.rIns) / 2),
     gamma (epsilon),
-    delta (min (maxDelta, 1 - exp(-params.totalInsertionRatePerSite()*t/(1-gamma))))
+    delta (min (maxDelta, 1 - exp(-(params.totalInsertionRatePerSite() + params.totalRightwardDeletionRatePerSite())*t/(2*(1-gamma)))))
   {
     if (verbose > 4)
       cerr << "PRANK probabilities: epsilon=" << epsilon << " gamma=" << gamma << " delta=" << delta << endl;
@@ -68,8 +68,8 @@ namespace TrajectoryLikelihood {
 
   RS07::RS07 (const IndelParams& params, double t, int verbose) :
     verbose (verbose),
-    epsilon (params.rDel),
-    delta (min (maxDelta, 1 / (1 + 1 / (1 - exp(-params.totalInsertionRatePerSite()*t/(1-epsilon))))))
+    epsilon ((params.rDel + params.rIns) / 2),
+    delta (min (maxDelta, 1 / (1 + 1 / (1 - exp(-(params.totalInsertionRatePerSite() + params.totalRightwardDeletionRatePerSite())*t/(2*(1-epsilon)))))))
   {
     if (verbose > 4)
       cerr << "RS07 probabilities: epsilon=" << epsilon << " delta=" << delta << endl;
