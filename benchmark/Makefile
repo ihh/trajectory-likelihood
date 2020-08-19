@@ -37,8 +37,8 @@ TIME_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map(2**($$_/8),-56..8));pri
 X_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..70));print"@m"')
 Y_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..65));print"@m"')
 XY_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..65));print"@m"')
-LAMBDA_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/50,0..50));print"@m"')
-MU_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/50,0..50));print"@m"')
+LAMBDA_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/50,1..50));print"@m"')
+MU_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/50,1..50));print"@m"')
 
 x$(X)-y$(Y)-scan-t: $(addprefix l1-m1-x$(X)-y$(Y)-t,$(addsuffix -set-seqlen,$(TIME_RANGE)))
 	echo $^
