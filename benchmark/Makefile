@@ -9,10 +9,10 @@ times:
 
 # Transform (gamma,mu,rins/gamma,rdel) of trajeclike into (lambda,mu,x,y) of general indel model
 relents: scan-gammas
-	cat *results | perl -e 'print"lambda mu x y t maxgap seqlen n method D reversible\n";while(<>){@m=/^D l(\S+)-m(\S+)-x(\S+)-y(\S+)-t(\S+)-g(\S+)-s(\S+)-n(\S+)-sim \S+-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
+	cat *results | perl -e 'print"lambda mu x y t maxgap seqlen n method D\n";while(<>){@m=/^D l(\S+)-m(\S+)-x(\S+)-y(\S+)-t(\S+)-g(\S+)-s(\S+)-n(\S+)-sim \S+-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
 
 stats: scan-gammas
-	cat *results | perl -e 'print"stat lambda mu x y t maxgap seqlen n method value reversible\n";while(<>){@m=/^([^D]\S*) l(\S+)-m(\S+)-x(\S+)-y(\S+)-t(\S+)-g(\S+)-s(\S+)-n(\S+)-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
+	cat *results | perl -e 'print"stat lambda mu x y t maxgap seqlen n method value\n";while(<>){@m=/^([^D]\S*) l(\S+)-m(\S+)-x(\S+)-y(\S+)-t(\S+)-g(\S+)-s(\S+)-n(\S+)-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
 
 scan-gammas: x.5-y.5-scan-t y.5-t.5-scan-x x.5-t.5-scan-y t.5-scan-gaplen
 

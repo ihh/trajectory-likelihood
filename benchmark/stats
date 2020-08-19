@@ -1,4 +1,4 @@
-stat lambda mu x y t maxgap seqlen n method value reversible
+stat lambda mu x y t maxgap seqlen n method value
 P0 1 1 .4 .5 .5 100 1000 100000 sim 0.355521
 Ei 1 1 .4 .5 .5 100 1000 100000 sim 2.027766894774454
 Ed 1 1 .4 .5 .5 100 1000 100000 sim 1.708250573713876

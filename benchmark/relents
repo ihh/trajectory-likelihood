@@ -1,4 +1,4 @@
-lambda mu x y t maxgap seqlen n method D reversible
+lambda mu x y t maxgap seqlen n method D
 1 1 .4 .5 .5 100 1000 100000 moments 0.026330527608300243
 1 1 .4 .5 .5 100 1000 100000 traj 1.1378474848659992
 1 1 .4 .5 .5 100 1000 100000 cim 0.05276984905244119
