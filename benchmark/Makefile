@@ -17,9 +17,9 @@ stats: scan-gammas
 scan-gammas: x.5-y.5-scan-t y.5-t.5-scan-x x.5-t.5-scan-y t.5-scan-gaplen
 
 TIME_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map(2**($$_/8),-56..8));print"@m"')
-X_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,40..60));print"@m"')
-Y_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,40..60));print"@m"')
-GAPLEN_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/10,10..40));print"@m"')
+X_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,30..70));print"@m"')
+Y_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,30..70));print"@m"')
+GAPLEN_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/10,10..80));print"@m"')
 
 x$(X)-y$(Y)-scan-t: $(addprefix l1-m1-x$(X)-y$(Y)-t,$(addsuffix -set-seqlen,$(TIME_RANGE)))
 	echo $^
