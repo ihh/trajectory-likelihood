@@ -93,8 +93,9 @@ l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-tkf92:
 l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-rs07:
 	(time $(TL) --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --rs07 >$@) >&$@.log
 
+# Override maxlen for PRANK, which has a high covariance
 l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-prank:
-	(time $(TL) --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --prank >$@) >&$@.log
+	(time $(TL) --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen 1000 --prank >$@) >&$@.log
 
 shorten-logs: $(addsuffix .short,$(wildcard *-traj.log) $(wildcard *-sim.log))
 

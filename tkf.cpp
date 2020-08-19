@@ -51,8 +51,12 @@ namespace TrajectoryLikelihood {
     gamma (epsilon),
     delta (min (maxDelta, 1 - exp(-(params.totalInsertionRatePerSite() + params.totalRightwardDeletionRatePerSite())*t/(2*(1-gamma)))))
   {
-    if (verbose > 4)
+    if (verbose > 4) {
       cerr << "PRANK probabilities: epsilon=" << epsilon << " gamma=" << gamma << " delta=" << delta << endl;
+      const double l = params.totalInsertionRatePerSite(), m = params.totalRightwardDeletionRatePerSite();
+      cerr << "lambda=" << l << " mu=" << m << " t=" << t << endl;
+      cerr << (1 - exp(-(l+m)*t/(2*(1-gamma)))) << endl;
+    }
   }
 
   const double PRANK::maxDelta = .49999;
