@@ -31,7 +31,7 @@ relents: scan-gammas
 stats: scan-gammas
 	cat *results | perl -e 'print"stat lambda mu x y t maxgap-seqlen-n method value\n";while(<>){@m=/^([^D]\S*) l(\S+)-m(\S+)-x(\S+)-y(\S+)-t(\S+)-g(\S+)-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
 
-scan-gammas: x.5-y.5-scan-t y.5-t.5-scan-x x.5-t.5-scan-y t.5-scan-xy x.5-y.5-t-.5-scan-lambda x.5-y.5-t-.5-scan-mu
+scan-gammas: x.5-y.5-scan-t y.5-t.5-scan-x x.5-t.5-scan-y t.5-scan-xy x.5-y.5-t.5-scan-lambda x.5-y.5-t.5-scan-mu
 
 TIME_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map(2**($$_/8),-56..8));print"@m"')
 X_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..70));print"@m"')
@@ -52,13 +52,13 @@ x$(X)-t$(T)-scan-y: $(addprefix l1-m1-x$(X)-y,$(addsuffix -t$(T)-set-seqlen,$(Y_
 t$(T)-scan-xy: $(addprefix x,$(addsuffix -t$(T)-set-y,$(XY_RANGE)))
 	echo $^
 
-x$(X)-t$(T)-set-y: l1-m1-x$(X)-y$(X)-t$(T)-set-seqlen
-	echo $^
-
 x$(X)-y$(Y)-t$(T)-scan-lambda: $(addprefix l,$(addsuffix -m1-x$(X)-y$(Y)-t$(T)-set-seqlen,$(LAMBDA_RANGE)))
 	echo $^
 
 x$(X)-y$(Y)-t$(T)-scan-mu: $(addprefix l1-m,$(addsuffix -x$(X)-y$(Y)-t$(T)-set-seqlen,$(MU_RANGE)))
+	echo $^
+
+x$(X)-t$(T)-set-y: l1-m1-x$(X)-y$(X)-t$(T)-set-seqlen
 	echo $^
 
 l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-set-seqlen { set_len(T,Y,Trials,InitLen,MaxGap) }: l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(MaxGap)-s$(InitLen)-n$(Trials)-results
