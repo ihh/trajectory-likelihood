@@ -1,0 +1,8 @@
+mu_GGI=1 lambda_GGI=0.44 x=0.5 y=0.5
+Entry in row i, column j is probability of inserting i residues and deleting j residues before the next match
+Total: 0.863995
+E[#ins]=0.270182 E[#del]=0.688425 E[#ins^2]=0.81264 E[#del^2]=2.6547 V[#ins]=0.739642 V[#del]=2.18077 E[#ins*#del]=0.181233 Cov(#ins,#del)=-0.00476733
+
+real	0m17.795s
+user	0m17.448s
+sys	0m0.035s
