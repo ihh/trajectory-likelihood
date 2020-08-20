@@ -1,3 +1,6 @@
+# This Makefile requires BioMake
+# https://github.com/evoldoers/biomake
+
 prolog
 set_len(T,Y,Trials,InitLen,MaxGap) :-
 	atom_concat('0',T,Tz),
