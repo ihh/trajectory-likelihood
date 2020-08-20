@@ -36,7 +36,7 @@ scan-gammas: x.5-y.5-scan-t y.5-t.5-scan-x x.5-t.5-scan-y t.5-scan-xy x.5-y.5-t.
 TIME_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map(2**($$_/8),-56..8));print"@m"')
 X_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..70));print"@m"')
 Y_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..65));print"@m"')
-XY_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..65));print"@m"')
+XY_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/100,0..95));print"@m"')
 LAMBDA_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/50,1..50));print"@m"')
 MU_RANGE = $(shell perl -e '@m=grep(s/^0\././ || 1,map($$_/50,1..50));print"@m"')
 
