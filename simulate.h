@@ -14,7 +14,7 @@ namespace TrajectoryLikelihood {
 
   struct SimulationCounts {
     vector<vector<long long> > count;
-    int overflowCount;
+    long long overflowCount;
     SimulationCounts (int len) : count (len + 1, vector<long long> (len + 1, 0)), overflowCount(0) { }
   };
   

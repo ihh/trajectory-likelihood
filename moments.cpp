@@ -11,7 +11,7 @@ namespace TrajectoryLikelihood {
     params (params),
     mu (params.totalRightwardDeletionRatePerSite()),
     lambda (params.totalInsertionRatePerSite()),
-    x (params.gamma * params.rIns),
+    x (params.rIns),
     y (params.rDel),
     T (tMax / dt + 1, vector<double> (4, 0.)),
     dt (dt),
