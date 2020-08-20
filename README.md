@@ -22,16 +22,16 @@ Type `make` to compile the command-line tool.
 ## Running
 
 ~~~~
-./trajeclike --gamma .99 --mu .049 -r .543 --time 1 --maxlen 20 --maxevents 3 -v1
+./trajeclike --mu .049 --y .543 --time 1 --maxlen 20 --maxevents 3 -v1
 ~~~~
 
-The values of the mu and r parameters here are (from the MLH 2004 paper) the maximum likelihood fit of a single-component geometric indel distribution to protein alignments in the [HOMSTRAD](https://www.ncbi.nlm.nih.gov/pubmed/9828015) database.
+The values of the mu and y parameters here are (from the MLH 2004 paper) the maximum likelihood fit of a single-component geometric indel distribution to protein alignments in the [HOMSTRAD](https://www.ncbi.nlm.nih.gov/pubmed/9828015) database.
 
 To compare to simulation results, run with the `--simulate` switch
 (note that this simulates directly from the underlying continuous-time Markov chain)
 
 ~~~~
-./trajeclike --gamma .99 --mu .049 -r .543 --time 1 --maxlen 20 --simulate -v1
+./trajeclike --mu .049 --y .543 --time 1 --maxlen 20 --simulate -v1
 ~~~~
 
 For more verbose logging, increase the verbosity (`-v`).
