@@ -28,6 +28,13 @@ all: relents stats times
 times:
 	../trajeclike --maxlen 40 --benchmark --trials 1000 >$@
 
+SIM_TIME_PREFIX = l1-m1-x.5-y.5-t
+SIM_TIME_SUFFIX = -g1000-s100000-n100-sim
+SIM_TIME_TARGETS = $(addprefix $(SIM_TIME_PREFIX),$(addsuffix $(SIM_TIME_SUFFIX),$(TIME_RANGE)))
+SIM_TIME_TARGET_LOGS = $(addsuffix .log.short,$(SIM_TIME_TARGETS))
+sim-times: $(SIM_TIME_TARGET_LOGS)
+	perl -e 'print"t time/s\n";for$$f(@ARGV){$$_=`egrep ^user $$f`;if(/\s(\d+)m([0-9\.]+)s/){$$t=$$1*60+$$2;if($$f=~/-t([0-9\.]+)/){print"$$1 $$t\n"}}}' $^ | sort -n >$@
+
 relents: scan-gammas
 	cat *results | perl -e 'print"lambda mu x y t maxgap seqlen n method D\n";while(<>){@m=/^D l(\S+)-m(\S+)-x(\S+)-y(\S+)-t(\S+)-g(\S+)-s(\S+)-n(\S+)-sim \S+-(\S+) (\S+)/;if(@m){print"@m\n"}}' >$@
 
@@ -68,6 +75,8 @@ l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-set-seqlen { set_len(T,Y,Trials,InitLen,MaxGap) }:
 
 $(PREFIX)-s$(S)-n$(N)-results: $(PREFIX)-s$(S)-n$(N)-sim $(PREFIX)-moments $(PREFIX)-traj $(PREFIX)-cim $(PREFIX)-tkf91 $(PREFIX)-tkf92 $(PREFIX)-rs07 $(PREFIX)-prank
 	$(RELENT) --normalize $^ >$@
+
+%-sim.log.short: %-sim
 
 l$(L)-m$(M)-x$(X)-y$(Y)-t$(T)-g$(G)-s$(S)-n$(N)-sim:
 	(time $(TL) --lambda $(L) --mu $(M) --x $(X) --y $(Y) --time $(T) --maxlen $(G) --seedtime --simulate --trials $(N) --initlen $(S) >$@) >&$@.log
