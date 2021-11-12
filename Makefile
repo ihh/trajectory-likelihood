@@ -5,7 +5,10 @@ BOOST_PREFIX = /usr
 ifeq (,$(wildcard $(BOOST_PREFIX)/include/boost/program_options.hpp))
 BOOST_PREFIX = /usr/local
 ifeq (,$(wildcard $(BOOST_PREFIX)/include/boost/program_options.hpp))
+BOOST_PREFIX = /usr/local/homebrew/opt/boost
+ifeq (,$(wildcard $(BOOST_PREFIX)/include/boost/program_options.hpp))
 BOOST_PREFIX =
+endif
 endif
 endif
 

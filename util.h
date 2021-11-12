@@ -12,8 +12,6 @@
 #include <mutex>
 #include <sys/stat.h>
 
-#include "gsl/gsl_matrix.h"
-
 /* uncomment to enable NaN checks */
 #define NAN_DEBUG
 
@@ -30,8 +28,6 @@ void Fail(const char* error, ...);
 #define Test(assertion,...) ((assertion) ? true : (Warn(__VA_ARGS__), false))
 #define Assert(assertion,...) do { if (!(assertion)) Abort("Assertion Failed: " __VA_ARGS__); } while (0)
 #define Require(assertion,...) do { if (!(assertion)) Fail(__VA_ARGS__); } while (0)
-
-void CheckGsl (int gslErrorCode);
 
 /* singular or plural? */
 std::string plural (long n, const char* singular);
@@ -269,9 +265,5 @@ void normalize (std::vector<double>&, double tolerance = -1);  // tolerance<0 =>
 
 // safelog(x)
 inline double safelog (double x) { return x > 0 ? log(x) : 0; }
-
-// GSL output
-void dumpVector (const std::string&, gsl_vector*);
-void dumpMatrix (const std::string&, gsl_matrix*);
 
 #endif /* UTIL_INCLUDED */
