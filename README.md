@@ -1,7 +1,17 @@
 # trajectory-likelihood
 
-This is a reference implementation of the method to calculate alignment gap probabilities by trajectory enumeration, as described by Miklós, Lunter &amp; Holmes in the paper
-[A "Long Indel" model for evolutionary sequence alignment](https://www.ncbi.nlm.nih.gov/pubmed/14694074) (2004).
+This is a reference implementation of several methods to calculate alignment gap probabilities using several different approximations to
+continuous-time Markov chains models of sequence evolution with insertions and deletions of geometrically distributed lengths
+(the "general geometric indel" model of [De Maio, 2020](https://pubmed.ncbi.nlm.nih.gov/32653921/);
+a special case of the "long indel" model of [Miklós, Lunter &amp; Holmes, 2004](https://www.ncbi.nlm.nih.gov/pubmed/14694074)).
+
+The methods implemented by this code include
+- trajectory enumeration, as described by Miklós, Lunter &amp; Holmes in the paper [A "Long Indel" model for evolutionary sequence alignment](https://www.ncbi.nlm.nih.gov/pubmed/14694074) (2004);
+- manual moment-matching, as described by De Maio in the paper [The Cumulative Indel Model: Fast and Accurate Statistical Evolutionary Alignment](https://pubmed.ncbi.nlm.nih.gov/32653921/) (2020);
+- renormalized moment-matching, as described by Holmes in the paper [A Model of Indel Evolution by Finite-State, Continuous-Time Machines
+](https://pubmed.ncbi.nlm.nih.gov/33020189/) (2020).
+
+## Notes on the implementation of trajectory enumeration from MLH 2004
 
 The code includes an implementation of Algorithm 1 from the MLH 2004 paper, which computes the likelihood of a state trajectory in an arbitrary continuous-time discrete-state Markov chain,
 with event times integrated out.
